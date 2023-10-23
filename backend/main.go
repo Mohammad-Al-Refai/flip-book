@@ -47,7 +47,7 @@ func createBase64ToFile(b64s []string, id string) string {
 		if err != nil {
 			panic(err)
 		}
-		f, err := os.Create(folderName + "/" + "f-" + strconv.Itoa(i) + ".png")
+		f, err := os.OpenFile(folderName+"/"+"f-"+strconv.Itoa(i)+".png", os.O_WRONLY|os.O_CREATE, 0600)
 		if err != nil {
 			panic(err)
 		}
