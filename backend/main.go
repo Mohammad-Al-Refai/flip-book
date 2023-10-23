@@ -2,9 +2,13 @@ package main
 
 import (
 	"encoding/base64"
-	"fmt"
+	"image"
+	"image/color/palette"
+	"image/draw"
+	"image/gif"
+	"image/png"
+	"log"
 	"os"
-	"os/exec"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
@@ -17,16 +21,15 @@ type Upload struct {
 }
 
 func main() {
+	setup()
 	app := fiber.New()
-
 	app.Post("/upload", func(c *fiber.Ctx) error {
 		data := &Upload{}
 		c.BodyParser(data)
-
 		folderName := createBase64ToFile(data.Images, uuid.NewString())
-		done, er := generateVideo(folderName, data.FPS)
-		if er == nil&&done {
-			return c.SendFile(folderName + "/output.mp4")
+		done, er := generateGIF(folderName, folderName)
+		if er == nil && done {
+			return c.SendFile(folderName + ".gif")
 		}
 		return c.SendString("error")
 	})
@@ -60,21 +63,43 @@ func createBase64ToFile(b64s []string, id string) string {
 	return folderName
 }
 
-func generateVideo(dir string, fps int) (done bool, er error) {
-	cm := exec.Command("ffmpeg", "-framerate", strconv.Itoa(fps), "-i", dir+"/f-%d.png", "-c:v", "libx264", dir+"/output.mp4")
-	cm.Wait()
-	// Start the command.
-	err := cm.Start()
+func generateGIF(dir string, fileName string) (done bool, er error) {
+	//Read images folder from dir.
+	files, err := os.ReadDir(dir)
+	outGif := &gif.GIF{LoopCount: 0}
 	if err != nil {
-		fmt.Println(err)
-		os.Exit(1)
+		return false, err
 	}
-	err = cm.Wait()
+	//Add images to outGif.
+	for _, file := range files {
+		//Read png file.
+		f, _ := os.Open(dir + "/" + file.Name())
+		img, DecodeError := png.Decode(f)
+		if DecodeError != nil {
+			panic(DecodeError)
+		}
+		f.Close()
+		// Create a new paletted image.
+		palettedImage := image.NewPaletted(img.Bounds(), palette.Plan9)
+		// Copy the pixels from the original image to the paletted image.
+		draw.Draw(palettedImage, img.Bounds(), img, img.Bounds().Min, draw.Src)
+		outGif.Image = append(outGif.Image, palettedImage)
+		outGif.Delay = append(outGif.Delay, 0)
+	}
+	//Create gif file
+	x, _ := os.OpenFile(fileName+".gif", os.O_WRONLY|os.O_CREATE, 0600)
+	defer x.Close()
+	gif.EncodeAll(x, outGif)
+	return true, nil
+}
+
+func setup() {
+	_, err := os.ReadDir("temp")
 	if err != nil {
-		fmt.Println(err)
-		done = false
-		return done, err
+		er := os.Mkdir("temp", os.ModeAppend)
+		if er != nil {
+			log.Println("Field to create temp")
+		}
+		return
 	}
-	done = true
-	return done, nil
 }
