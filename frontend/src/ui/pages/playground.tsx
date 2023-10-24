@@ -18,7 +18,7 @@ export function PlaygroundPage() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isRendering, setIsRendering] = useState(false);
   const [images, setImages] = useState<string[]>([]);
-  const FPS = 10;
+  const FPS = 100;
 
   function onCodeChange(str: string) {
     pages[indx] = str;
@@ -66,11 +66,9 @@ export function PlaygroundPage() {
     clearInterval(playTimer);
   }
   function onRenderClicked() {
-    if (isRendering) {
-      return;
-    }
+    setImages([]);
     setIsRendering(true);
-    clearInterval(playTimer);
+    onStopClicked();
     indx = -1;
     setIndx(indx);
     setSelectedPage(pages[0]);
@@ -79,6 +77,7 @@ export function PlaygroundPage() {
       images.push(data);
       setImages([...images]);
       if (indx == pages.length - 1) {
+        console.log("DONE", images.length);
         download();
         clearInterval(t);
         return;
@@ -86,7 +85,7 @@ export function PlaygroundPage() {
       indx = indx + 1;
       setIndx(indx);
       setSelectedPage(pages[indx]);
-    }, FPS / pages.length);
+    }, 500);
   }
 
   async function toImage() {
@@ -97,7 +96,9 @@ export function PlaygroundPage() {
     return canvasData.split(",")[1];
   }
   function download() {
-    Upload(images, FPS);
+    Upload(images).then((res) => {
+      console.log(res);
+    });
   }
   return (
     <AppContainer>
