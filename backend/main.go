@@ -37,8 +37,8 @@ func main() {
 }
 
 func createBase64ToFile(b64s []string, id string) string {
-	folderName := "temp/" + uuid.NewString()
-	err := os.Mkdir(folderName, os.ModeAppend)
+	folderName := "temp/" + id
+	err := os.Mkdir(folderName, 0700)
 	if err != nil {
 		panic(err)
 	}
@@ -47,7 +47,7 @@ func createBase64ToFile(b64s []string, id string) string {
 		if err != nil {
 			panic(err)
 		}
-		f, err := os.OpenFile(folderName+"/"+"f-"+strconv.Itoa(i)+".png", os.O_WRONLY|os.O_CREATE, 0600)
+		f, err := os.OpenFile(folderName+"/"+"f-"+strconv.Itoa(i)+".png", os.O_WRONLY|os.O_CREATE, 0700)
 		if err != nil {
 			panic(err)
 		}
@@ -87,7 +87,7 @@ func generateGIF(dir string, fileName string) (done bool, er error) {
 		outGif.Delay = append(outGif.Delay, 0)
 	}
 	//Create gif file
-	x, _ := os.OpenFile(fileName+".gif", os.O_WRONLY|os.O_CREATE, 0600)
+	x, _ := os.OpenFile(fileName+".gif", os.O_WRONLY|os.O_CREATE, 0700)
 	defer x.Close()
 	gif.EncodeAll(x, outGif)
 	return true, nil
@@ -96,7 +96,7 @@ func generateGIF(dir string, fileName string) (done bool, er error) {
 func setup() {
 	_, err := os.ReadDir("temp")
 	if err != nil {
-		er := os.Mkdir("temp", os.ModeAppend)
+		er := os.Mkdir("temp", 0700)
 		if er != nil {
 			log.Println("Field to create temp")
 		}
