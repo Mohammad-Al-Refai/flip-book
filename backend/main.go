@@ -16,7 +16,6 @@ import (
 )
 
 type Upload struct {
-	FPS    int      `json:"fps"`
 	Images []string `json:"images"`
 }
 
@@ -79,9 +78,9 @@ func generateGIF(dir string, fileName string) (done bool, er error) {
 			panic(DecodeError)
 		}
 		f.Close()
-		// Create a new paletted image.
+		//Create a new paletted image.
 		palettedImage := image.NewPaletted(img.Bounds(), palette.Plan9)
-		// Copy the pixels from the original image to the paletted image.
+		//Copy the pixels from the original image to the paletted image.
 		draw.Draw(palettedImage, img.Bounds(), img, img.Bounds().Min, draw.Src)
 		outGif.Image = append(outGif.Image, palettedImage)
 		outGif.Delay = append(outGif.Delay, 0)
