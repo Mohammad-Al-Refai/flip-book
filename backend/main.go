@@ -12,6 +12,7 @@ import (
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/google/uuid"
 )
 
@@ -22,6 +23,10 @@ type Upload struct {
 func main() {
 	setup()
 	app := fiber.New()
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: "https://json-illustrator-front-end.onrender.com",
+		AllowHeaders: "Origin, Content-Type, Accept",
+	}))
 	app.Post("/upload", func(c *fiber.Ctx) error {
 		data := &Upload{}
 		c.BodyParser(data)
