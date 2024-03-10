@@ -1,109 +1,70 @@
 package main
 
+//TODO unable to delete the generated gif files
 import (
+	"bytes"
 	"encoding/base64"
+	"fmt"
 	"image"
 	"image/color/palette"
 	"image/draw"
 	"image/gif"
 	"image/png"
-	"log"
-	"os"
-	"strconv"
-
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/cors"
-	"github.com/google/uuid"
+	"syscall/js"
 )
 
-type Upload struct {
-	Images []string `json:"images"`
-}
-
 func main() {
-	setup()
-	app := fiber.New()
-	app.Use(cors.New(cors.Config{
-		AllowOrigins: "https://json-illustrator-front-end.onrender.com",
-		AllowHeaders: "Origin, Content-Type, Accept",
-	}))
-	app.Post("/upload", func(c *fiber.Ctx) error {
-		data := &Upload{}
-		c.BodyParser(data)
-		folderName := createBase64ToFile(data.Images, uuid.NewString())
-		done, er := generateGIF(folderName, folderName)
-		if er == nil && done {
-			return c.SendFile(folderName + ".gif")
-		}
-		return c.SendString("error")
-	})
-	app.Listen(":4000")
+	js.Global().Set("getGif", js.FuncOf(handleArray))
+	select {}
+}
+func handleArray(this js.Value, args []js.Value) interface{} {
+	if len(args) != 1 {
+		panic(fmt.Sprintf("expected one argument, got %d", len(args)))
+	}
+	arr := args[0]
+	if arr.Type() != js.TypeObject {
+		panic(fmt.Sprintf("expected an array, got %s", arr.Type()))
+	}
+	goSlice := make([]interface{}, arr.Length())
+	for i := 0; i < arr.Length(); i++ {
+		element := arr.Index(i)
+		goSlice[i] = element.String()
+	}
+
+	return generateGIF(goSlice)
 }
 
-func createBase64ToFile(b64s []string, id string) string {
-	folderName := "temp/" + id
-	err := os.Mkdir(folderName, 0700)
-	if err != nil {
-		panic(err)
-	}
-	for i, str := range b64s {
-		dec, err := base64.StdEncoding.DecodeString(str)
-		if err != nil {
-			panic(err)
-		}
-		f, err := os.OpenFile(folderName+"/"+"f-"+strconv.Itoa(i)+".png", os.O_WRONLY|os.O_CREATE, 0700)
-		if err != nil {
-			panic(err)
-		}
-		defer f.Close()
-
-		if _, err := f.Write(dec); err != nil {
-			panic(err)
-		}
-		if err := f.Sync(); err != nil {
-			panic(err)
-		}
-	}
-	return folderName
-}
-
-func generateGIF(dir string, fileName string) (done bool, er error) {
-	//Read images folder from dir.
-	files, err := os.ReadDir(dir)
+// Accept array of base64 string
+func generateGIF(frames []interface{}) string {
 	outGif := &gif.GIF{LoopCount: 0}
-	if err != nil {
-		return false, err
-	}
 	//Add images to outGif.
-	for _, file := range files {
+	for _, frame := range frames {
 		//Read png file.
-		f, _ := os.Open(dir + "/" + file.Name())
-		img, DecodeError := png.Decode(f)
+		decodeBase64, err := readPNGBase64(frame.(string))
+		if err != nil {
+			panic(err)
+		}
+		img, DecodeError := png.Decode(bytes.NewReader(decodeBase64))
 		if DecodeError != nil {
 			panic(DecodeError)
 		}
-		f.Close()
 		//Create a new paletted image.
 		palettedImage := image.NewPaletted(img.Bounds(), palette.Plan9)
 		//Copy the pixels from the original image to the paletted image.
 		draw.Draw(palettedImage, img.Bounds(), img, img.Bounds().Min, draw.Src)
 		outGif.Image = append(outGif.Image, palettedImage)
 		outGif.Delay = append(outGif.Delay, 0)
+		fmt.Printf("GIF: %+v\n", outGif)
 	}
-	//Create gif file
-	x, _ := os.OpenFile(fileName+".gif", os.O_WRONLY|os.O_CREATE, 0700)
-	defer x.Close()
-	gif.EncodeAll(x, outGif)
-	return true, nil
-}
+	var buff bytes.Buffer
+	gif.EncodeAll(&buff, outGif)
+	// datas := buff.Bytes()
 
-func setup() {
-	_, err := os.ReadDir("temp")
-	if err != nil {
-		er := os.Mkdir("temp", 0700)
-		if er != nil {
-			log.Println("Field to create temp")
-		}
-		return
-	}
+	// // Encode to base64 string
+	encoded := base64.StdEncoding.EncodeToString(buff.Bytes())
+	return encoded
+}
+func readPNGBase64(value string) ([]byte, error) {
+
+	return base64.StdEncoding.DecodeString(value)
 }

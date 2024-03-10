@@ -33,6 +33,9 @@ export function Timeline({
   onPlayClicked,
   onStopClicked,
   onRenderClicked,
+  disablePlayButton,
+  disableRenderButton,
+  disableStopButton,
 }: TimelineProps) {
   return (
     <StyledTimeline>
@@ -40,18 +43,23 @@ export function Timeline({
         <Button
           className="ml-l"
           variant="primary"
-          disabled={pages.length < 3}
+          disabled={disablePlayButton}
           onClick={onPlayClicked}
         >
           Play
         </Button>
-        <Button className="ml-l" variant="primary" onClick={onStopClicked}>
+        <Button
+          className="ml-l"
+          disabled={disableStopButton}
+          variant="primary"
+          onClick={onStopClicked}
+        >
           Stop
         </Button>
         <Button
           className="ml-l"
           variant="primary"
-          disabled={pages.length < 3}
+          disabled={disableRenderButton}
           onClick={onRenderClicked}
         >
           Render
@@ -83,4 +91,7 @@ interface TimelineProps {
   onStopClicked: () => void;
   onRenderClicked: () => void;
   current: number;
+  disablePlayButton: boolean;
+  disableStopButton: boolean;
+  disableRenderButton: boolean;
 }
