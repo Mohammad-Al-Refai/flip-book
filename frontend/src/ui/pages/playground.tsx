@@ -1,4 +1,6 @@
-import { useEffect, useRef, useState } from "react";
+/** @format */
+
+import { useEffect, useState } from "react";
 import { AppContainer } from "../components/AppContainer";
 import { Container } from "../components/Container";
 import { JSONViewer } from "../components/JSONViewer";
@@ -7,6 +9,7 @@ import { exampleCode } from "../../utils/JSONEditorSchema";
 import { Timeline } from "../components/Timeline";
 import html2canvas from "html2canvas";
 import { Text } from "../components/Text";
+import { useGetGif } from "../../hooks/useGetGif";
 
 export function PlaygroundPage() {
   const [currentPageCode, setCurrentPageCode] = useState(
@@ -20,8 +23,20 @@ export function PlaygroundPage() {
   const [renderTimer, setRenderTimer] = useState(0);
   const [isRendering, setIsRendering] = useState(false);
   const [images, setImages] = useState<string[]>([]);
-  const downloadRef = useRef<HTMLAnchorElement | null>(null);
+  const serviceWorker = useGetGif();
   const FPS = 30;
+  useEffect(() => {
+    if (serviceWorker.gifBase64 != "") {
+      const base64String = serviceWorker.gifBase64;
+      const binaryData = base64ToBinary(base64String);
+      const blob = createBlob(binaryData);
+      const link = document.createElement("a");
+      link.href = URL.createObjectURL(blob);
+      link.download = "image.gif";
+      link.click();
+      URL.revokeObjectURL(link.href);
+    }
+  }, [serviceWorker.gifBase64]);
   useEffect(() => {
     // When hit the limit of pages
     if (isPlaying && curser == pages.length) {
@@ -116,19 +131,7 @@ export function PlaygroundPage() {
     return canvasData.split(",")[1];
   }
   function download() {
-    const base64String = window.getGif([...images]);
-    const binaryData = base64ToBinary(base64String);
-    const blob = createBlob(binaryData);
-
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = "image.gif"; 
-    link.click();
-    URL.revokeObjectURL(link.href);
-
-    if (downloadRef == null) {
-      return;
-    }
+    serviceWorker.call(images);
   }
   function base64ToBinary(base64String: string) {
     const bytes = atob(base64String);
@@ -145,7 +148,6 @@ export function PlaygroundPage() {
 
   return (
     <AppContainer>
-      <a ref={downloadRef} download></a>
       <Container className="flex w-100 h-80">
         <Container className="w-100 h-100" background="surface2" id="viewer">
           <JSONViewer i={curser} code={JSON.stringify(selectedPage)} />

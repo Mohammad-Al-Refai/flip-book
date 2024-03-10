@@ -10,14 +10,7 @@
 
 <body>
   <div id="root"></div>
-  <script src="./public/wasm_exec.js"></script>
   <script type="module" src="/src/main.tsx"></script>
-  <script>
-    const go = new Go();
-    WebAssembly.instantiateStreaming(fetch("./public/main.wasm"), go.importObject).then((result) => {
-      go.run(result.instance);
-    });
-  </script>
 </body>
 
 </html>

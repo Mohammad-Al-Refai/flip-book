@@ -1,6 +1,6 @@
 package main
 
-//TODO unable to delete the generated gif files
+
 import (
 	"bytes"
 	"encoding/base64"
@@ -58,9 +58,6 @@ func generateGIF(frames []interface{}) string {
 	}
 	var buff bytes.Buffer
 	gif.EncodeAll(&buff, outGif)
-	// datas := buff.Bytes()
-
-	// // Encode to base64 string
 	encoded := base64.StdEncoding.EncodeToString(buff.Bytes())
 	return encoded
 }
