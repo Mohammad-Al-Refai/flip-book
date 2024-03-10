@@ -6,7 +6,7 @@ const StyledJSONViewer = styled.div`
   overflow: hidden;
 `;
 
-export function JSONViewer({ code }: JSONViewerProps) {
+export function JSONViewer({ code, i }: JSONViewerProps) {
   if (!isValidJSON(JSON.parse(code))) {
     return (
       <Text variant="primary" fontSize="L">
@@ -16,13 +16,17 @@ export function JSONViewer({ code }: JSONViewerProps) {
   }
   const parsedCode = JSON.parse(JSON.parse(code)) as JSONEditorSchema;
   return (
-    <StyledJSONViewer>
-      {parsedCode.elements.map((element) => createNewElement(element))}
-    </StyledJSONViewer>
+    <>
+      <h3>{i}</h3>
+      <StyledJSONViewer>
+        {parsedCode.elements.map((element) => createNewElement(element))}
+      </StyledJSONViewer>
+    </>
   );
 }
 
 interface JSONViewerProps {
+  i: number;
   code: string;
 }
 
