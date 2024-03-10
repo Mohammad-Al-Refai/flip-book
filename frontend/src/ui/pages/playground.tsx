@@ -4,12 +4,11 @@ import { useEffect, useState } from "react";
 import { AppContainer } from "../components/AppContainer";
 import { Container } from "../components/Container";
 import { JSONViewer } from "../components/JSONViewer";
-import { JSONEditor } from "../components/JSONEditor";
 import { exampleCode } from "../../utils/JSONEditorSchema";
 import { Timeline } from "../components/Timeline";
 import html2canvas from "html2canvas";
-import { Text } from "../components/Text";
 import { useGetGif } from "../../hooks/useGetGif";
+import { Editor } from "@monaco-editor/react";
 
 export function PlaygroundPage() {
   const [currentPageCode, setCurrentPageCode] = useState(
@@ -149,16 +148,26 @@ export function PlaygroundPage() {
   return (
     <AppContainer>
       <Container className="flex w-100 h-80">
-        <Container className="w-100 h-100" background="surface2" id="viewer">
+        <Container
+          className="flex justify-content-center align-items-center w-100 h-100"
+          background="surface4"
+        >
           <JSONViewer i={curser} code={JSON.stringify(selectedPage)} />
         </Container>
         <Container className="w-100 h-100" background="secondary">
-          <Text variant="primary" fontSize="L">
-            Code
-          </Text>
-          <JSONEditor
+          <Editor
+            height="100%"
+            language="json"
+            theme="vs-dark"
             value={JSON.parse(JSON.stringify(currentPageCode))}
-            onChange={onCodeChange}
+            onChange={(code, _) => onCodeChange(String(code))}
+            options={{
+              inlineSuggest: false,
+              fontSize: "16px",
+              formatOnType: true,
+              autoClosingBrackets: true,
+              minimap: { scale: 10 },
+            }}
           />
         </Container>
       </Container>

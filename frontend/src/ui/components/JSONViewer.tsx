@@ -4,6 +4,9 @@ import { Text } from "./Text";
 
 const StyledJSONViewer = styled.div`
   overflow: hidden;
+  width: 500px;
+  height: 500px;
+  background-color: white;
 `;
 
 export function JSONViewer({ code, i }: JSONViewerProps) {
@@ -16,12 +19,9 @@ export function JSONViewer({ code, i }: JSONViewerProps) {
   }
   const parsedCode = JSON.parse(JSON.parse(code)) as JSONEditorSchema;
   return (
-    <>
-      <h3>{i}</h3>
-      <StyledJSONViewer>
-        {parsedCode.elements.map((element) => createNewElement(element))}
-      </StyledJSONViewer>
-    </>
+    <StyledJSONViewer id="viewer">
+      {parsedCode.elements.map((element) => createNewElement(element))}
+    </StyledJSONViewer>
   );
 }
 
@@ -32,9 +32,7 @@ interface JSONViewerProps {
 
 function createNewElement(element: JSONEditorSchema["elements"][0]) {
   const key = window.crypto.randomUUID();
-  return (
-    <div key={key} style={{ position: "absolute", ...element.props }}></div>
-  );
+  return <div key={key} style={{ ...element.props }}></div>;
 }
 function isValidJSON(jsonString: string): boolean {
   try {
