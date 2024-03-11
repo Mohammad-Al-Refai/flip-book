@@ -1,2 +1,2 @@
 # JSON-Illustrator
-Create MP4 file from dom elements as frames
+Create GIF file from dom elements as frames
