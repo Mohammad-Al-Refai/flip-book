@@ -1,5 +1,4 @@
 import { ThemeContext } from "styled-components";
-import { useAppDispatch } from "./hooks/useAppDispatch";
 import { useAppSelector } from "./hooks/useAppSelector";
 
 import GlobalStyle from "./theme/GlobalStyle";

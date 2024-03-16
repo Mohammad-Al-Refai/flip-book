@@ -8,7 +8,7 @@ const StyledJsonEditor = styled.textarea`
   color: ${(props) => props.theme.colors.onSurface};
   resize: none;
   outline: none;
-  font-size: 30px;
+  font-size: 20px;
 `;
 
 export function JSONEditor({ onChange, value }: JSONEditorProps) {

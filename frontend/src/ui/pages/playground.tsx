@@ -149,11 +149,14 @@ export function PlaygroundPage() {
   return (
     <AppContainer>
       <Container className="flex w-100 h-80">
-        <Container className="w-100 h-100" background="surface2" id="viewer">
+        <Container
+          className="flex justify-content-center align-items-center w-100 h-100"
+          background="surface4"
+        >
           <JSONViewer i={curser} code={JSON.stringify(selectedPage)} />
         </Container>
-        <Container className="w-100 h-100" background="secondary">
-          <Text variant="primary" fontSize="L">
+        <Container className="w-100 h-100" background="surface">
+          <Text variant="onPrimary" fontSize="S">
             Code
           </Text>
           <JSONEditor

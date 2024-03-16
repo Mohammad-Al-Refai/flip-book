@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import { Button } from "./Button";
 import { Container } from "./Container";
+import { Text } from "./Text";
 
 const StyledTimeline = styled.div`
   padding: ${(props) => props.theme.horizontalSpacing.L};
@@ -13,9 +14,10 @@ const StyledTimelineItem = styled.div<{ highlight: boolean }>`
   height: 50px;
   background-color: ${(props) =>
     props.highlight
-      ? props.theme.colors.surface4
-      : props.theme.colors.secondary};
-  border: 1px solid ${(props) => props.theme.colors.onSurface};
+      ? props.theme.colors.secondary
+      : props.theme.colors.surface4};
+  border: ${(props) => (props.highlight ? "1px" : "unset")} solid
+    ${(props) => props.theme.colors.onSurface};
   color: ${(props) => props.theme.colors.onSurface};
   display: flex;
   align-items: center;
@@ -23,6 +25,18 @@ const StyledTimelineItem = styled.div<{ highlight: boolean }>`
   border-radius: 4px;
   margin: ${(props) => props.theme.surrounding.S};
   cursor: pointer;
+`;
+const StyledAdd = styled(Button)`
+  background-color: ${(props) => props.theme.colors.primary};
+  width: 50px;
+  height: 50px;
+  margin: ${(props) => props.theme.surrounding.S};
+  color: ${(props) => props.theme.colors.onPrimary};
+
+  font-size: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 export function Timeline({
@@ -75,9 +89,7 @@ export function Timeline({
             {i}
           </StyledTimelineItem>
         ))}
-        <Button className="ml-l" variant="primary" onClick={onAdd}>
-          Add
-        </Button>
+        <StyledAdd onClick={onAdd}>+</StyledAdd>
       </Container>
     </StyledTimeline>
   );

@@ -4,6 +4,9 @@ import { Text } from "./Text";
 
 const StyledJSONViewer = styled.div`
   overflow: hidden;
+  width: 500px;
+  height: 500px;
+  background-color: white;
 `;
 
 export function JSONViewer({ code, i }: JSONViewerProps) {
@@ -16,12 +19,9 @@ export function JSONViewer({ code, i }: JSONViewerProps) {
   }
   const parsedCode = JSON.parse(JSON.parse(code)) as JSONEditorSchema;
   return (
-    <>
-      <h3>{i}</h3>
-      <StyledJSONViewer>
-        {parsedCode.elements.map((element) => createNewElement(element))}
-      </StyledJSONViewer>
-    </>
+    <StyledJSONViewer id="viewer">
+      {parsedCode.elements.map((element) => createNewElement(element))}
+    </StyledJSONViewer>
   );
 }
 
