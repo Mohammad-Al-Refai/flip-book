@@ -119,7 +119,7 @@ export function PlaygroundPage() {
         setCurser((prev) => {
           return prev + 1;
         });
-      }, FPS * 10)
+      }, 100)
     );
   }
 
