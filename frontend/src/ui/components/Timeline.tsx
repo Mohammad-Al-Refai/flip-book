@@ -89,7 +89,9 @@ export function Timeline({
             {i}
           </StyledTimelineItem>
         ))}
-        <StyledAdd onClick={onAdd}>+</StyledAdd>
+        <StyledAdd variant="primary" onClick={onAdd}>
+          +
+        </StyledAdd>
       </Container>
     </StyledTimeline>
   );
