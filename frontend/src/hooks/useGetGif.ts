@@ -14,6 +14,7 @@ export function useGetGif() {
     setIsLoading(false);
   });
   function call(frames: string[]) {
+    console.log("HELLOW");
     worker.postMessage({ command: "generate", frames });
     setIsLoading(true);
   }

@@ -13,6 +13,8 @@ async function init() {
       }
     }
     if (event.data.command=="generate") {
+      console.log("START GENERATING")
+  console.log({data:event.data})
       self.postMessage(self.getGif(event.data.frames))
     }
   });

@@ -52,19 +52,13 @@ export function PlaygroundPage() {
       return;
     }
     //Update page while playing
-    if (isPlaying || isRendering) {
+    if (isPlaying) {
       setSelectedPage(pages[curser]);
       setCurrentPageCode(pages[curser]);
     }
-    if (isRendering) {
-      toImage().then((base64) => {
-        setImages([...images, base64]);
-      });
-    }
+
     if (isRendering && curser == pages.length) {
-      clearInterval(renderTimer);
       setIsPlaying(false);
-      setRenderTimer(0);
       setIsRendering(false);
       setCurser(0);
       setCurrentPageCode((prev) => {
@@ -112,24 +106,23 @@ export function PlaygroundPage() {
   function onRenderClicked() {
     setCurser((prev) => (prev = 0));
     setImages([]);
-    setIsRendering(true);
-    setRenderTimer(
-      setInterval(() => {
-        setCurser((prev) => {
-          return prev + 1;
-        });
-      }, FPS * 10)
-    );
+    toImage().then((base64) => {
+      setImages([...images, base64]);
+      setCurser(curser + 1);
+      setCurrentPageCode(pages[curser + 1]);
+    });
   }
 
   async function toImage() {
     const c = await html2canvas(
       document.getElementById("viewer") as HTMLDivElement
     );
+    console.log(c);
     const canvasData = c.toDataURL("image/png");
     return canvasData.split(",")[1];
   }
   function download() {
+    console.log("DOWNLOAD");
     serviceWorker.call(images);
   }
   function base64ToBinary(base64String: string) {
