@@ -9,7 +9,6 @@ export function usePlaygroundViewModel() {
   const [playTimer, setPlayTimer] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isRendering, setIsRendering] = useState(false);
-  const [images, setImages] = useState<string[]>([]);
   const serviceWorker = useGetGif();
   const FPS = 30;
   useEffect(() => {
@@ -50,9 +49,6 @@ export function usePlaygroundViewModel() {
     clearInterval(playTimer);
   }
   function onRenderClicked() {
-    // setCurser((prev) => (prev = 0));
-    // setImages([]);
-    // setIsRendering(true);
     download();
   }
   function toImage() {
