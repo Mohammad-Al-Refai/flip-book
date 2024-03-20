@@ -1,18 +1,13 @@
 import { useEffect, useState } from "react";
-import { exampleCode } from "../../utils/JSONEditorSchema";
 import { useGetGif } from "../../hooks/useGetGif";
-import html2canvas from "html2canvas";
 
 export function usePlaygroundViewModel() {
-  const [currentPageCode, setCurrentPageCode] = useState(
-    JSON.stringify(exampleCode)
-  );
-  const [pages, setPages] = useState<string[]>([currentPageCode]);
+  const [currentPage, setCurrentPage] = useState("");
+  const [pages, setPages] = useState([""]);
   const [curser, setCurser] = useState(0);
   const [selectedPage, setSelectedPage] = useState(pages[0]);
   const [playTimer, setPlayTimer] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [renderTimer, setRenderTimer] = useState(0);
   const [isRendering, setIsRendering] = useState(false);
   const [images, setImages] = useState<string[]>([]);
   const serviceWorker = useGetGif();
@@ -29,63 +24,15 @@ export function usePlaygroundViewModel() {
       URL.revokeObjectURL(link.href);
     }
   }, [serviceWorker.gifBase64]);
-  useEffect(() => {
-    // When hit the limit of pages
-    if (isPlaying && curser == pages.length) {
-      clearInterval(playTimer);
-      setIsPlaying(false);
-      setPlayTimer(0);
-      setCurser(0);
-      setCurrentPageCode((prev) => {
-        prev = pages[0];
-        setSelectedPage(prev);
-        return prev;
-      });
 
-      return;
-    }
-    //Update page while playing
-    if (isPlaying || isRendering) {
-      setSelectedPage(pages[curser]);
-      setCurrentPageCode(pages[curser]);
-    }
-    if (isRendering) {
-      toImage().then((base64) => {
-        setImages([...images, base64]);
-      });
-    }
-    if (isRendering && curser == pages.length) {
-      clearInterval(renderTimer);
-      setIsPlaying(false);
-      setRenderTimer(0);
-      setIsRendering(false);
-      setCurser(0);
-      setCurrentPageCode((prev) => {
-        prev = pages[0];
-        setSelectedPage(prev);
-        return prev;
-      });
-      download();
-    }
-  }, [curser]);
-  function onCodeChange(str: string) {
-    setCurrentPageCode(str);
-    setSelectedPage((prev) => {
-      pages[curser] = str;
-      prev = pages[curser];
-      return prev;
-    });
-  }
   function onAddNewPage() {
-    //Add new page with previews page code
-    setPages([...pages, pages[pages.length - 1]]);
-    //Select the added page
+    setPages([...pages, toImage()]);
     setCurser(pages.length);
   }
   function onSelectPage(index: number) {
     setCurser(index);
     setSelectedPage(pages[index]);
-    setCurrentPageCode(pages[index]);
+    setCurrentPage(pages[index]);
   }
   function onPlayClicked() {
     setCurser((prev) => (prev = 0));
@@ -103,26 +50,19 @@ export function usePlaygroundViewModel() {
     clearInterval(playTimer);
   }
   function onRenderClicked() {
-    setCurser((prev) => (prev = 0));
-    setImages([]);
-    setIsRendering(true);
-    setRenderTimer(
-      setInterval(() => {
-        setCurser((prev) => {
-          return prev + 1;
-        });
-      }, 100)
-    );
+    // setCurser((prev) => (prev = 0));
+    // setImages([]);
+    // setIsRendering(true);
+    download();
   }
-  async function toImage() {
-    const c = await html2canvas(
-      document.getElementById("viewer") as HTMLDivElement
-    );
+  function toImage() {
+    const c = document.getElementById("defaultCanvas0") as HTMLCanvasElement;
     const canvasData = c.toDataURL("image/png");
     return canvasData.split(",")[1];
   }
   function download() {
-    serviceWorker.call(images);
+    console.log(pages);
+    serviceWorker.call(pages);
   }
   function base64ToBinary(base64String: string) {
     const bytes = atob(base64String);
@@ -132,9 +72,16 @@ export function usePlaygroundViewModel() {
     }
     return new Uint8Array(binary);
   }
+
   function createBlob(binaryData: any) {
     const blob = new Blob([binaryData], { type: "image/gif" });
     return blob;
+  }
+  function onCanvasChange() {
+    const data = toImage();
+    setCurrentPage(data);
+    pages[curser] = data;
+    setPages([...pages]);
   }
   const isPlayButtonDisabled = isPlaying || pages.length < 3 || isRendering;
   const isRenderButtonDisabled = isPlaying || pages.length < 3 || isRendering;
@@ -144,10 +91,10 @@ export function usePlaygroundViewModel() {
     onStopClicked,
     onRenderClicked,
     onAddNewPage,
-    onCodeChange,
     onSelectPage,
+    onCanvasChange,
     curser,
-    currentPageCode,
+    currentPage,
     selectedPage,
     pages,
     isPlayButtonDisabled,

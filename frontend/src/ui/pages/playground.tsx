@@ -1,8 +1,7 @@
 import { AppContainer } from "../components/AppContainer";
+import { Canvas } from "../components/Canvas";
 import { Container } from "../components/Container";
-import { JSONViewer } from "../components/JSONViewer";
 import { Timeline } from "../components/Timeline";
-import { GraphicalElementList } from "../components/Editor/GraphicalElementList";
 import { usePlaygroundViewModel } from "./usePlaygroundViewModel";
 
 export function PlaygroundPage() {
@@ -11,12 +10,11 @@ export function PlaygroundPage() {
   return (
     <AppContainer>
       <Container className="flex w-100 h-80">
-        <GraphicalElementList />
         <Container
           className="flex justify-content-center align-items-center w-100 h-100"
           background="surface4"
         >
-          <JSONViewer i={vm.curser} code={JSON.stringify(vm.selectedPage)} />
+          <Canvas page={vm.currentPage} onChange={vm.onCanvasChange} />
         </Container>
       </Container>
       <Container className="w-100 h-20" background="surface">

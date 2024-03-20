@@ -1,7 +1,8 @@
 import styled from "styled-components";
 import { Button } from "./Button";
 import { Container } from "./Container";
-import { Text } from "./Text";
+import { RectProp } from "./Canvas";
+import { PageModel } from "../../models/PageModel";
 
 const StyledTimeline = styled.div`
   padding: ${(props) => props.theme.horizontalSpacing.L};
