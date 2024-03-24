@@ -31,8 +31,6 @@ export default function Canvas({ page, onChange }: CanvasProps) {
       }
       if (isMousePressed()) {
         p5.stroke(currentColor);
-        // p5.rect(p5.mouseX, p5.mouseY, 5, 5);
-        console.log(p5.pmouseX);
         p5.strokeWeight(10);
         p5.line(p5.mouseX, p5.mouseY, p5.pmouseX, p5.pmouseY);
         isStartDrawing = true;
