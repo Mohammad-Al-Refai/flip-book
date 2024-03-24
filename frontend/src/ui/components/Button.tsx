@@ -22,9 +22,13 @@ const StyledElement = styled.button<{ variant: variant }>`
     }
   }};
   font-size: ${(props) => props.theme.fontSizes.M};
-  &:hover {
-    box-shadow: 0px 0px 4px 1px ${(props) => props.theme.colors.surface};
-  }
+  ${(props) => {
+    if (!props.disabled) {
+      return `&:hover {
+    box-shadow: 0px 0px 3px 1px ${props.theme.colors[props.variant]};
+  }`;
+    }
+  }}
 `;
 export function Button({
   children,
