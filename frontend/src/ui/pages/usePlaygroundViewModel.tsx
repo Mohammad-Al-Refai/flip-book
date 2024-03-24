@@ -24,6 +24,17 @@ export function usePlaygroundViewModel() {
     }
   }, [serviceWorker.gifBase64]);
 
+  //Track curser & isPlaying to update the currentPage
+  useEffect(() => {
+    if (!isPlaying) {
+      return;
+    }
+    if (curser == pages.length) {
+      setCurser((prev) => (prev = 0));
+      return;
+    }
+    setCurrentPage(pages[curser]);
+  }, [curser, isPlaying]);
   function onAddNewPage() {
     setPages([...pages, toImage()]);
     setCurser(pages.length);
