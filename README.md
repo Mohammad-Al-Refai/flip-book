@@ -3,7 +3,7 @@ Drawing frame by frame to make aniamtions and convert them to gif file
 
 
 
-# Stack
+## Useing
 - React js
 - Typesript
 - Webassembly
