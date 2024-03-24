@@ -1,5 +1,5 @@
 # Flip book
-Drawing frame by frame to make aniamtions and convert them to gif file
+Drawing frame by frame to make animations and convert them to gif file
 
 
 
