@@ -11,7 +11,7 @@ const StyledElement = styled.div<{ background?: variant }>`
     }
   }};
 `;
-export function Container({
+export default function Container({
   children,
   background,
   className,

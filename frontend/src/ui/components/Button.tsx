@@ -30,7 +30,7 @@ const StyledElement = styled.button<{ variant: variant }>`
     }
   }}
 `;
-export function Button({
+export default function Button({
   children,
   variant,
   onClick,

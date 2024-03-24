@@ -9,7 +9,7 @@ const StyledElement = styled.div`
   display: flex;
   height: 100vh;
 `;
-export function AppContainer({ children }: AppContainerProps) {
+export default function AppContainer({ children }: AppContainerProps) {
   return <StyledElement>{children}</StyledElement>;
 }
 

@@ -1,7 +1,7 @@
 import { P5CanvasInstance, ReactP5Wrapper } from "@p5-wrapper/react";
 import { Image } from "p5";
 
-export function Canvas({ page, onChange }: CanvasProps) {
+export default function Canvas({ page, onChange }: CanvasProps) {
   function sketch(p5: P5CanvasInstance) {
     let currentColor = "red";
     let isStartDrawing = false;

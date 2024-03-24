@@ -1,7 +1,7 @@
-import { Button } from "./Button";
-import { Container } from "./Container";
+import Button from "./Button";
+import Container from "./Container";
 
-export function Control({
+export default function Control({
   disablePlayButton,
   onPlayClicked,
   disableStopButton,
