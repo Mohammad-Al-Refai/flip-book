@@ -1,24 +1,30 @@
 import styled from "styled-components";
 import { Button } from "./Button";
 import { Container } from "./Container";
-import { RectProp } from "./Canvas";
-import { PageModel } from "../../models/PageModel";
+import { If } from "./If";
+import { Text } from "./Text";
 
 const StyledTimeline = styled.div`
   padding: ${(props) => props.theme.horizontalSpacing.L};
-  width: 100%;
+  height: 100vh;
   display: flex;
+  width: 25%;
+  min-width: 100px;
   flex-direction: column;
+  background-color: ${(props) => props.theme.colors.surface3};
 `;
 const StyledTimelineItem = styled.div<{ highlight: boolean }>`
-  width: 50px;
-  height: 50px;
+  filter: ${(props) => (props.highlight ? "contrast(50%);" : "unset")};
+  overflow: hidden;
+  display: inline;
+  max-height: 200px;
+  max-width: 200px;
+  min-height: 200px;
+  min-width: 200px;
   background-color: ${(props) =>
     props.highlight
       ? props.theme.colors.secondary
       : props.theme.colors.surface4};
-  border: ${(props) => (props.highlight ? "1px" : "unset")} solid
-    ${(props) => props.theme.colors.onSurface};
   color: ${(props) => props.theme.colors.onSurface};
   display: flex;
   align-items: center;
@@ -33,67 +39,49 @@ const StyledAdd = styled(Button)`
   height: 50px;
   margin: ${(props) => props.theme.surrounding.S};
   color: ${(props) => props.theme.colors.onPrimary};
-
   font-size: 25px;
   display: flex;
   align-items: center;
   justify-content: center;
 `;
+const StyledScrollableContainer = styled.div`
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  overflow-y: auto;
+`;
+const StyledPreviewImage = styled.img`
+  width: 100%;
+  height: 100%;
+`;
+export function Timeline({ pages, onAdd, current, onChange }: TimelineProps) {
+  function getSrc(data: string) {
+    return "data:image/png;base64," + data;
+  }
 
-export function Timeline({
-  pages,
-  onAdd,
-  current,
-  onChange,
-  onPlayClicked,
-  onStopClicked,
-  onRenderClicked,
-  disablePlayButton,
-  disableRenderButton,
-  disableStopButton,
-}: TimelineProps) {
   return (
     <StyledTimeline>
-      <Container className="w-100 m-l flex align-items-center justify-content-center">
-        <Button
-          className="ml-l"
-          variant="primary"
-          disabled={disablePlayButton}
-          onClick={onPlayClicked}
-        >
-          Play
-        </Button>
-        <Button
-          className="ml-l"
-          disabled={disableStopButton}
-          variant="primary"
-          onClick={onStopClicked}
-        >
-          Stop
-        </Button>
-        <Button
-          className="ml-l"
-          variant="primary"
-          disabled={disableRenderButton}
-          onClick={onRenderClicked}
-        >
-          Render
-        </Button>
-      </Container>
-      <Container className="flex">
+      <StyledScrollableContainer>
         {pages.map((page, i) => (
           <StyledTimelineItem
             key={i}
             highlight={current == i}
             onClick={() => onChange(i)}
           >
-            {i}
+            <If condition={page != ""}>
+              <StyledPreviewImage src={getSrc(page)} />
+            </If>
+            <If condition={page == ""}>
+              <Text fontSize="M" variant="primary">
+                Draw to see changes
+              </Text>
+            </If>
           </StyledTimelineItem>
         ))}
         <StyledAdd variant="primary" onClick={onAdd}>
           +
         </StyledAdd>
-      </Container>
+      </StyledScrollableContainer>
     </StyledTimeline>
   );
 }
@@ -102,11 +90,6 @@ interface TimelineProps {
   pages: string[];
   onAdd: () => void;
   onChange: (index: number) => void;
-  onPlayClicked: () => void;
-  onStopClicked: () => void;
-  onRenderClicked: () => void;
+
   current: number;
-  disablePlayButton: boolean;
-  disableStopButton: boolean;
-  disableRenderButton: boolean;
 }
