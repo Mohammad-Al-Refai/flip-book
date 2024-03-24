@@ -1,7 +1,9 @@
-import { lazy } from "react";
+import { Suspense, lazy } from "react";
 import { ThemeContext } from "styled-components";
 import { useAppSelector } from "./hooks/useAppSelector";
 import GlobalStyle from "./theme/GlobalStyle";
+import { Text } from "./ui/components/Text";
+import Container from "./ui/components/Container";
 
 const PlaygroundPage = lazy(() => import("./ui/pages/playground"));
 function App() {
@@ -10,7 +12,17 @@ function App() {
   return (
     <ThemeContext.Provider value={theme}>
       <GlobalStyle />
-      <PlaygroundPage />
+      <Suspense
+        fallback={
+          <Container className="flex align-items-center justify-content-center">
+            <Text variant="primary" fontSize="L">
+              Loading...
+            </Text>
+          </Container>
+        }
+      >
+        <PlaygroundPage />
+      </Suspense>
     </ThemeContext.Provider>
   );
 }

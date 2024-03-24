@@ -5,7 +5,7 @@ async function init() {
   self.addEventListener("message", async (event) => {
     if(event.data.command=="start"){
       try {
-        WebAssembly.instantiateStreaming(fetch("./public/main.wasm"), go.importObject).then((result) => {
+        WebAssembly.instantiateStreaming(fetch("./main.wasm"), go.importObject).then((result) => {
         go.run(result.instance);
       });
       } catch (error) {
