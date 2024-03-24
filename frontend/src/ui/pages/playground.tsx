@@ -1,11 +1,13 @@
-import { AppContainer } from "../components/AppContainer";
-import { Canvas } from "../components/Canvas";
-import { Container } from "../components/Container";
-import { Control } from "../components/Control";
-import { Timeline } from "../components/Timeline";
+import { lazy } from "react";
 import { usePlaygroundViewModel } from "./usePlaygroundViewModel";
 
-export function PlaygroundPage() {
+const AppContainer = lazy(() => import("../components/AppContainer"));
+const Canvas = lazy(() => import("../components/Canvas"));
+const Container = lazy(() => import("../components/Container"));
+const Control = lazy(() => import("../components/Control"));
+const Timeline = lazy(() => import("../components/Timeline"));
+
+export default function PlaygroundPage() {
   const vm = usePlaygroundViewModel();
 
   return (

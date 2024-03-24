@@ -1,6 +1,5 @@
 import styled from "styled-components";
-import { Button } from "./Button";
-import { Container } from "./Container";
+import Button from "./Button";
 import { If } from "./If";
 import { Text } from "./Text";
 
@@ -54,7 +53,12 @@ const StyledPreviewImage = styled.img`
   width: 100%;
   height: 100%;
 `;
-export function Timeline({ pages, onAdd, current, onChange }: TimelineProps) {
+export default function Timeline({
+  pages,
+  onAdd,
+  current,
+  onChange,
+}: TimelineProps) {
   function getSrc(data: string) {
     return "data:image/png;base64," + data;
   }
