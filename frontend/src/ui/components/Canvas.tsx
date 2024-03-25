@@ -1,3 +1,5 @@
+/** @format */
+
 import { P5CanvasInstance, ReactP5Wrapper } from "@p5-wrapper/react";
 import { Image } from "p5";
 
@@ -21,7 +23,7 @@ export default function Canvas({ page, onChange }: CanvasProps) {
       p5.colorMode(p5.RGB);
       p5.noStroke();
       if (img != undefined) {
-        p5.image(img, 0, 0, img.width, img.height);
+        p5.image(img, 0, 0, img.width / 2, img.height / 2);
       }
     };
     p5.draw = () => {
