@@ -3,6 +3,8 @@ import { useGetGif } from "../../hooks/useGetGif";
 
 export function usePlaygroundViewModel() {
   const [currentPage, setCurrentPage] = useState("");
+  const [previousPage, setPreviousPage] = useState("");
+
   const [pages, setPages] = useState([""]);
   const [curser, setCurser] = useState(0);
   const [selectedPage, setSelectedPage] = useState(pages[0]);
@@ -36,7 +38,9 @@ export function usePlaygroundViewModel() {
     setCurrentPage(pages[curser]);
   }, [curser, isPlaying]);
   function onAddNewPage() {
-    setPages([...pages, toImage()]);
+    setPages([...pages, ""]);
+    setPreviousPage(toImage());
+    setCurrentPage("");
     setCurser(pages.length);
   }
   function onSelectPage(index: number) {
@@ -102,6 +106,7 @@ export function usePlaygroundViewModel() {
     onCanvasChange,
     curser,
     currentPage,
+    previousPage,
     selectedPage,
     pages,
     isPlayButtonDisabled,

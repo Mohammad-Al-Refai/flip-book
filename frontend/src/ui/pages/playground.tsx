@@ -32,7 +32,11 @@ export default function PlaygroundPage() {
           className="flex justify-content-center align-items-center w-100 h-100"
           background="surface4"
         >
-          <Canvas page={vm.currentPage} onChange={vm.onCanvasChange} />
+          <Canvas
+            previousPage={vm.previousPage}
+            currentPage={vm.currentPage}
+            onChange={vm.onCanvasChange}
+          />
         </Container>
       </Container>
     </AppContainer>
