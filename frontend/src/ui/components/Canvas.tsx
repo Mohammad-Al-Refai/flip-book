@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { toPNGBase64 } from "../../utils/Base64Utils";
 import { Curser } from "./Curser";
 import { If } from "./If";
+import { DrawingTool } from "../../utils/Tools";
 
 export default function Canvas({
   currentPage,
@@ -11,6 +12,7 @@ export default function Canvas({
   isPlaying,
   shouldClearEditorLayer,
   editorCanvasRef,
+  currentTool,
 }: CanvasProps) {
   const [x, setX] = useState(0);
   const [y, setY] = useState(0);
@@ -153,6 +155,7 @@ interface CanvasProps {
   shouldClearEditorLayer: boolean;
   currentPage: string;
   currentHintPage: string;
+  currentTool: DrawingTool;
 }
 export interface RectProp {
   x: number;
