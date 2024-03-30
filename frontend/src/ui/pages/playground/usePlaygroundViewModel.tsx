@@ -42,6 +42,7 @@ export function usePlaygroundViewModel() {
       return;
     }
     setCurrentFrame(frames[curser]);
+    setCurrentHintFrame(hintFrames[curser]);
   }, [curser, isPlaying]);
 
   function onAddNewFrame() {
