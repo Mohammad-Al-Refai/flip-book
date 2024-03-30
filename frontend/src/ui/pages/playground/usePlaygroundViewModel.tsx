@@ -110,6 +110,11 @@ export function usePlaygroundViewModel() {
   function onToolChange(tool: DrawingTool) {
     setCurrentTool(tool);
   }
+  function onDeleteFrame(index: number) {
+    setPages(pages.splice(index, 1));
+  }
+  function onCopyFrame(index: number) {}
+
   const isAddDisabled = pages[pages.length - 1] == "";
   const isPlayButtonDisabled =
     isPlaying ||
@@ -132,6 +137,8 @@ export function usePlaygroundViewModel() {
     onCanvasChange,
     onClearCanvas,
     onToolChange,
+    onDeleteFrame,
+    onCopyFrame,
     canvasRef,
     curser,
     currentPage,

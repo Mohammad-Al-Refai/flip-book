@@ -44,6 +44,8 @@ export default function PlaygroundPage() {
           onChange={vm.onSelectPage}
           onPlayClicked={vm.onPlayClicked}
           onPauseClicked={vm.onPauseClicked}
+          onDeleteFrame={vm.onDeleteFrame}
+          onCopyFrame={vm.onCopyFrame}
         />
       </Container>
     </AppContainer>

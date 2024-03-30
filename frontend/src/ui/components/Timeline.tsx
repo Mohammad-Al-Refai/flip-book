@@ -13,9 +13,18 @@ const StyledTimeline = styled.div`
   flex-direction: column;
   background-color: ${(props) => props.theme.colors.surface3};
 `;
+const StyledActionsContainer = styled.div`
+  display: flex;
+  position: absolute;
+  transform: translate(0%, 0%);
+  opacity: 0;
+  z-index: 999;
+  transition: 0.1s;
+`;
+const StyledActionsContainerClassName =
+  StyledActionsContainer.styledComponentId;
 const StyledTimelineItem = styled.div<{ $highlight: boolean }>`
   transition: 0.1s;
-  overflow: hidden;
   display: inline;
   border: ${(props) =>
     props.$highlight ? `2px solid ${props.theme.colors.primary}` : "unset"};
@@ -35,8 +44,11 @@ const StyledTimelineItem = styled.div<{ $highlight: boolean }>`
   margin: ${(props) => props.theme.surrounding.S};
   cursor: pointer;
   &:hover {
-    scale: 1.1;
     box-shadow: 0px 0px 15px 3px #2f2f2f;
+    .${StyledActionsContainerClassName} {
+      transform: translate(0%, -150%);
+      opacity: 1;
+    }
   }
 `;
 const StyledAdd = styled(Button)`
@@ -59,6 +71,7 @@ const StyledPreviewImage = styled.img`
   width: 100%;
   height: 100%;
 `;
+
 export default function Timeline({
   pages,
   onAdd,
@@ -66,6 +79,8 @@ export default function Timeline({
   onChange,
   onPlayClicked,
   onPauseClicked,
+  onCopyFrame,
+  onDeleteFrame,
   isPlaying,
   disableAdd,
   disablePlayButton,
@@ -107,13 +122,39 @@ export default function Timeline({
       </div>
       <StyledScrollableContainer>
         {pages.map((page, i) => (
-          <StyledTimelineItem
-            key={i}
-            $highlight={current == i}
-            onClick={() => onChange(i)}
-          >
+          <StyledTimelineItem key={i} $highlight={current == i}>
+            <If condition={!isPlaying}>
+              <StyledActionsContainer>
+                <Button
+                  className="mr-m"
+                  variant="tertiary"
+                  onClick={() => onCopyFrame(i)}
+                >
+                  <Text
+                    fontSize="S"
+                    className={Icons.COPY}
+                    variant="onTertiary"
+                  ></Text>
+                </Button>
+                <Button variant="danger" onClick={() => onDeleteFrame(i)}>
+                  <Text
+                    fontSize="S"
+                    className={Icons.DELETE}
+                    variant="onDanger"
+                  ></Text>
+                </Button>
+              </StyledActionsContainer>
+            </If>
             <If condition={page != ""}>
-              <StyledPreviewImage src={getSrc(page)} />
+              <StyledPreviewImage
+                onClick={() => {
+                  if (isPlaying) {
+                    return;
+                  }
+                  onChange(i);
+                }}
+                src={getSrc(page)}
+              />
             </If>
             <If condition={page == ""}>
               <Text fontSize="S" variant="primary">
@@ -140,6 +181,8 @@ interface TimelineProps {
   onChange: (index: number) => void;
   onPlayClicked: () => void;
   onPauseClicked: () => void;
+  onDeleteFrame: (index: number) => void;
+  onCopyFrame: (index: number) => void;
   disablePlayButton: boolean;
   isPlaying: boolean;
   disableAdd: boolean;
