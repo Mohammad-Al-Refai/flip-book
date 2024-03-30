@@ -1,7 +1,4 @@
-/** @format */
-
 import { useEffect, useRef, useState } from "react";
-import { If } from "./If";
 
 export default function Canvas({
   currentPage,
@@ -9,37 +6,37 @@ export default function Canvas({
   currentHintPage,
   onClear,
   isPlaying,
-  shouldClear,
-  canvasRef,
+  shouldClearEditorLayer,
+  editorCanvasRef,
 }: CanvasProps) {
-  const [ctx, setCtx] = useState<CanvasRenderingContext2D | undefined>(
-    undefined
-  );
-  const [previousCtx, setPreviousCtx] = useState<
+  const [editorLayerContext, updateEditorLayerContext] = useState<
     CanvasRenderingContext2D | undefined
   >(undefined);
-  const previousPageCanvasRef = useRef<HTMLCanvasElement>(null);
+  const [hintLayerContext, updateHintLayerContext] = useState<
+    CanvasRenderingContext2D | undefined
+  >(undefined);
+  const hintPageCanvasRef = useRef<HTMLCanvasElement>(null);
   const [isPainting, setIsPanting] = useState(false);
 
   useEffect(() => {
-    const context = canvasRef.current!.getContext("2d", {
+    const context = editorCanvasRef.current!.getContext("2d", {
       willReadFrequently: true,
     });
     if (context != null) {
-      setCtx(context);
+      updateEditorLayerContext(context);
     }
-    const previousContext = previousPageCanvasRef.current!.getContext("2d");
-    if (previousContext != null) {
-      setPreviousCtx(previousContext);
+    const hintCtx = hintPageCanvasRef.current!.getContext("2d");
+    if (hintCtx != null) {
+      updateHintLayerContext(hintCtx);
     }
   }, []);
 
   useEffect(() => {
-    if (shouldClear) {
-      clear();
+    if (shouldClearEditorLayer) {
+      clearEditorLayer();
       onClear();
     }
-  }, [shouldClear]);
+  }, [shouldClearEditorLayer]);
 
   useEffect(() => {
     if (currentPage == "") {
@@ -47,37 +44,43 @@ export default function Canvas({
     }
     const currentImage = new Image();
     currentImage.src = toPNGBase64(currentPage);
-    ctx!.drawImage(currentImage, 0, 0);
+    editorLayerContext!.drawImage(currentImage, 0, 0);
   }, [currentPage]);
 
   useEffect(() => {
-    if (!currentHintPage) {
+    if (!hintLayerContext) {
       return;
     }
-    previousCtx?.clearRect(
-      0,
-      0,
-      canvasRef.current!.width,
-      canvasRef.current!.height
-    );
+    if (!currentHintPage) {
+      clearHintLayer();
+      return;
+    }
     const hintImage = new Image();
     hintImage.src = toPNGBase64(currentHintPage);
-    previousCtx!.drawImage(hintImage, 0, 0);
+    hintLayerContext!.drawImage(hintImage, 0, 0);
   }, [currentHintPage]);
 
   function toPNGBase64(data: string) {
     return "data:image/png;base64," + data;
   }
   useEffect(() => {
-    if (ctx == undefined) {
+    if (editorLayerContext == undefined) {
       return;
     }
-    clear();
-  }, [ctx]);
+    clearEditorLayer();
+  }, [editorLayerContext]);
 
-  function clear() {
-    ctx!.fillStyle = "white";
-    ctx!.fillRect(0, 0, canvasRef.current!.width, canvasRef.current!.height);
+  function clearEditorLayer() {
+    editorLayerContext!.fillStyle = "white";
+    editorLayerContext!.fillRect(
+      0,
+      0,
+      editorCanvasRef.current!.width,
+      editorCanvasRef.current!.height
+    );
+  }
+  function clearHintLayer() {
+    hintLayerContext!.reset();
   }
   function mouseDown(e: React.MouseEvent<HTMLCanvasElement>) {
     if (!isPainting) {
@@ -86,31 +89,21 @@ export default function Canvas({
   }
   function mouseUp(e: React.MouseEvent<HTMLCanvasElement>) {
     setIsPanting(false);
-    ctx!.stroke();
-    ctx!.beginPath();
-    // previousCtx!.stroke();
-    // previousCtx!.beginPath();
+    editorLayerContext!.stroke();
+    editorLayerContext!.beginPath();
     onChange();
   }
   function mouseMove(e: React.MouseEvent<HTMLCanvasElement>) {
     if (!isPainting) {
       return;
     }
-    ctx!.lineWidth = 2;
-    ctx!.lineCap = "round";
-    ctx!.lineTo(
-      e.clientX - canvasRef.current!.offsetLeft,
-      e.clientY - canvasRef.current!.offsetTop
+    editorLayerContext!.lineWidth = 2;
+    editorLayerContext!.lineCap = "round";
+    editorLayerContext!.lineTo(
+      e.clientX - editorCanvasRef.current!.offsetLeft,
+      e.clientY - editorCanvasRef.current!.offsetTop
     );
-    ctx!.stroke();
-
-    // previousCtx!.lineWidth = 2;
-    // previousCtx!.lineCap = "round";
-    // previousCtx!.lineTo(
-    //   e.clientX - canvasRef.current!.offsetLeft,
-    //   e.clientY - canvasRef.current!.offsetTop
-    // );
-    // previousCtx!.stroke();
+    editorLayerContext!.stroke();
   }
 
   return (
@@ -119,14 +112,13 @@ export default function Canvas({
         onMouseDown={mouseDown}
         onMouseUp={mouseUp}
         onMouseMove={mouseMove}
-        ref={canvasRef}
+        ref={editorCanvasRef}
         width={800}
         height={600}
       />
       <canvas
-        className="previous-canvas"
-        style={{ display: isPlaying ? "none" : "block" }}
-        ref={previousPageCanvasRef}
+        className={isPlaying ? "hide-hint-canvas" : "hint-canvas"}
+        ref={hintPageCanvasRef}
         onMouseDown={mouseDown}
         onMouseUp={mouseUp}
         onMouseMove={mouseMove}
@@ -140,8 +132,8 @@ interface CanvasProps {
   onChange: () => void;
   onClear: () => void;
   isPlaying: boolean;
-  canvasRef: React.RefObject<HTMLCanvasElement>;
-  shouldClear: boolean;
+  editorCanvasRef: React.RefObject<HTMLCanvasElement>;
+  shouldClearEditorLayer: boolean;
   currentPage: string;
   currentHintPage: string;
 }

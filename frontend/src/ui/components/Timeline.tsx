@@ -1,5 +1,3 @@
-/** @format */
-
 import styled from "styled-components";
 import Button from "./Button";
 import { If } from "./If";
