@@ -111,8 +111,17 @@ export function usePlaygroundViewModel() {
     setCurrentTool(tool);
   }
   function onDeleteFrame(index: number) {
-    setPages(pages.splice(index, 1));
+    setPages((prev) => {
+      const newPages = pages.filter((_, i) => i != index);
+      const newHintPages = pages.filter((_, i) => i != index);
+      setCurrentPage(newPages[curser - 1]);
+      setCurrentHintPage(newPages[curser - 2]);
+      setCurser(curser - 1);
+      setHintPages([...newHintPages]);
+      return [...newPages];
+    });
   }
+
   function onCopyFrame(index: number) {}
 
   const isAddDisabled = pages[pages.length - 1] == "";
