@@ -5,9 +5,9 @@ import { If } from "./If";
 import { DrawingTool } from "../../utils/Tools";
 
 export default function Canvas({
-  currentPage,
+  currentFrame,
   onChange,
-  currentHintPage,
+  currentHintFrame,
   onClear,
   isPlaying,
   shouldClearEditorLayer,
@@ -47,26 +47,32 @@ export default function Canvas({
   }, [shouldClearEditorLayer]);
 
   useEffect(() => {
-    if (currentPage == "") {
+    if (currentFrame == "") {
       return;
     }
     const currentImage = new Image();
-    currentImage.src = toPNGBase64(currentPage);
+    currentImage.onerror = () => {
+      console.log("Error while loading currentImage");
+    };
+    currentImage.src = toPNGBase64(currentFrame);
     editorLayerContext!.drawImage(currentImage, 0, 0);
-  }, [currentPage]);
+  }, [currentFrame]);
 
   useEffect(() => {
     if (!hintLayerContext) {
       return;
     }
-    if (!currentHintPage) {
+    if (!currentHintFrame) {
       clearHintLayer();
       return;
     }
     const hintImage = new Image();
-    hintImage.src = toPNGBase64(currentHintPage);
+    hintImage.onerror = () => {
+      console.log("Error while loading hintImage");
+    };
+    hintImage.src = toPNGBase64(currentHintFrame);
     hintLayerContext!.drawImage(hintImage, 0, 0);
-  }, [currentHintPage]);
+  }, [currentHintFrame]);
 
   useEffect(() => {
     if (editorLayerContext == undefined) {
@@ -177,8 +183,8 @@ interface CanvasProps {
   isPlaying: boolean;
   editorCanvasRef: React.RefObject<HTMLCanvasElement>;
   shouldClearEditorLayer: boolean;
-  currentPage: string;
-  currentHintPage: string;
+  currentFrame: string;
+  currentHintFrame: string;
   currentTool: DrawingTool;
 }
 export interface RectProp {

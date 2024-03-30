@@ -41,7 +41,7 @@ export const initialState: Theme = {
     XL2: FontSizes.XL2,
     XL3: FontSizes.XL3,
   },
-  //#3d5a80 // #98c1d9 // #e0fbfc // #ee6c4d //#293241
+
   colors: {
     primary: "#ee6c4d",
     onPrimary: "white",
@@ -58,6 +58,12 @@ export const initialState: Theme = {
     surface3: "#30363d",
     surface4: "#484f58",
     onSurface: "white",
+    tertiary: "#0e7cd9",
+    onTertiary: "white",
+    tertiaryContainer: "#4d86ee",
+    onTertiaryContainer: "white",
+    danger: "#FF204E",
+    onDanger: "white",
   },
   surrounding: {
     XS: Surrounding.XS,
