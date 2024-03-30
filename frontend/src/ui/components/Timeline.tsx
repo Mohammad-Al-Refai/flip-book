@@ -123,7 +123,7 @@ export default function Timeline({
       <StyledScrollableContainer>
         {pages.map((page, i) => (
           <StyledTimelineItem key={i} $highlight={current == i}>
-            <If condition={!isPlaying && pages.length != 1}>
+            <If condition={!isPlaying}>
               <StyledActionsContainer>
                 <Button
                   className="mr-m"
@@ -136,13 +136,15 @@ export default function Timeline({
                     variant="onTertiary"
                   ></Text>
                 </Button>
-                <Button variant="danger" onClick={() => onDeleteFrame(i)}>
-                  <Text
-                    fontSize="S"
-                    className={Icons.DELETE}
-                    variant="onDanger"
-                  ></Text>
-                </Button>
+                <If condition={pages.length != 1}>
+                  <Button variant="danger" onClick={() => onDeleteFrame(i)}>
+                    <Text
+                      fontSize="S"
+                      className={Icons.DELETE}
+                      variant="onDanger"
+                    ></Text>
+                  </Button>
+                </If>
               </StyledActionsContainer>
             </If>
             <If condition={page != ""}>

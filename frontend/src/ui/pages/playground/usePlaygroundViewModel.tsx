@@ -114,15 +114,26 @@ export function usePlaygroundViewModel() {
     setPages((prev) => {
       const newPages = pages.filter((_, i) => i != index);
       const newHintPages = pages.filter((_, i) => i != index);
-      setCurrentPage(newPages[curser - 1]);
-      setCurrentHintPage(newPages[curser - 2]);
-      setCurser(curser - 1);
+      if (index > curser) {
+        setCurser(curser);
+        setCurrentHintPage(newPages[curser - 1]);
+      } else {
+        setCurser(curser - 1);
+        setCurrentPage(newPages[curser - 1]);
+        setCurrentHintPage(newPages[curser - 2]);
+      }
+
       setHintPages([...newHintPages]);
       return [...newPages];
     });
   }
 
-  function onCopyFrame(index: number) {}
+  function onCopyFrame(index: number) {
+    const targetFrame = pages[index];
+    const left = pages.slice(0, index);
+    const right = pages.slice(index, pages.length);
+    setPages([...left, targetFrame, ...right]);
+  }
 
   const isAddDisabled = pages[pages.length - 1] == "";
   const isPlayButtonDisabled =
