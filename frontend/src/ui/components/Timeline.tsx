@@ -12,8 +12,8 @@ const StyledTimeline = styled.div`
   flex-direction: column;
   background-color: ${(props) => props.theme.colors.surface3};
 `;
-const StyledTimelineItem = styled.div<{ highlight: boolean }>`
-  filter: ${(props) => (props.highlight ? "contrast(50%);" : "unset")};
+const StyledTimelineItem = styled.div<{ $highlight: boolean }>`
+  filter: ${(props) => (props.$highlight ? "contrast(50%);" : "unset")};
   overflow: hidden;
   display: inline;
   max-height: 200px;
@@ -21,7 +21,7 @@ const StyledTimelineItem = styled.div<{ highlight: boolean }>`
   min-height: 200px;
   min-width: 200px;
   background-color: ${(props) =>
-    props.highlight
+    props.$highlight
       ? props.theme.colors.secondary
       : props.theme.colors.surface4};
   color: ${(props) => props.theme.colors.onSurface};
@@ -70,7 +70,7 @@ export default function Timeline({
         {pages.map((page, i) => (
           <StyledTimelineItem
             key={i}
-            highlight={current == i}
+            $highlight={current == i}
             onClick={() => onChange(i)}
           >
             <If condition={page != ""}>

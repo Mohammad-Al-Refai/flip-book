@@ -4,7 +4,7 @@ import { ColorKeys } from "../../theme/ColorKeys";
 
 type variant = keyof ColorKeys;
 
-const StyledElement = styled.button<{ variant: variant }>`
+const StyledElement = styled.button<{ $variant: variant }>`
   cursor: pointer;
   border: 0px solid;
   border-radius: ${(props) => props.theme.surrounding.M};
@@ -12,12 +12,12 @@ const StyledElement = styled.button<{ variant: variant }>`
   background-color: ${(props) =>
     props.disabled
       ? props.theme.colors.surface2
-      : props.theme.colors[props.variant]};
+      : props.theme.colors[props.$variant]};
   color: ${(props) => {
-    if (props.variant == "primary") {
+    if (props.$variant == "primary") {
       return props.theme.colors.onPrimary;
     }
-    if (props.variant == "secondary") {
+    if (props.$variant == "secondary") {
       return props.theme.colors.onSecondary;
     }
   }};
@@ -25,7 +25,7 @@ const StyledElement = styled.button<{ variant: variant }>`
   ${(props) => {
     if (!props.disabled) {
       return `&:hover {
-    box-shadow: 0px 0px 3px 1px ${props.theme.colors[props.variant]};
+    box-shadow: 0px 0px 3px 1px ${props.theme.colors[props.$variant]};
   }`;
     }
   }}
@@ -39,7 +39,7 @@ export default function Button({
 }: ButtonProps) {
   return (
     <StyledElement
-      variant={variant}
+      $variant={variant}
       className={className}
       disabled={disabled}
       onClick={onClick}

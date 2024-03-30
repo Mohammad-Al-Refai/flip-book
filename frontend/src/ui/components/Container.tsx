@@ -3,11 +3,11 @@ import styled from "styled-components";
 import { ColorKeys } from "../../theme/ColorKeys";
 type variant = keyof ColorKeys;
 
-const StyledElement = styled.div<{ background?: variant }>`
+const StyledElement = styled.div<{ $background?: variant }>`
   overflow: hidden;
   background-color: ${(props) => {
-    if (props.background) {
-      return props.theme.colors[props.background];
+    if (props.$background) {
+      return props.theme.colors[props.$background];
     }
   }};
 `;
@@ -19,7 +19,7 @@ export default function Container({
 }: ContainerProps) {
   return (
     <StyledElement
-      background={background}
+      $background={background}
       id={id}
       className={className ? className : ""}
     >
