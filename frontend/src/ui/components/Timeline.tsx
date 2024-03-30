@@ -123,7 +123,7 @@ export default function Timeline({
       <StyledScrollableContainer>
         {pages.map((page, i) => (
           <StyledTimelineItem key={i} $highlight={current == i}>
-            <If condition={!isPlaying}>
+            <If condition={!isPlaying && pages.length != 1}>
               <StyledActionsContainer>
                 <Button
                   className="mr-m"
