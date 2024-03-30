@@ -1,16 +1,20 @@
-import { useEffect, useState } from "react";
+/** @format */
+
+import { useEffect, useRef, useState } from "react";
 import { useGetGif } from "../../hooks/useGetGif";
 
 export function usePlaygroundViewModel() {
   const [currentPage, setCurrentPage] = useState("");
   const [previousPage, setPreviousPage] = useState("");
-
+  const canvasRef = useRef<HTMLCanvasElement>(null);
   const [pages, setPages] = useState([""]);
   const [curser, setCurser] = useState(0);
   const [selectedPage, setSelectedPage] = useState(pages[0]);
   const [playTimer, setPlayTimer] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isRendering, setIsRendering] = useState(false);
+  const [shouldClearCanvas, setShouldClearCanvas] = useState(false);
+
   const serviceWorker = useGetGif();
   const FPS = 30;
   useEffect(() => {
@@ -41,7 +45,11 @@ export function usePlaygroundViewModel() {
     setPages([...pages, ""]);
     setPreviousPage(toImage());
     setCurrentPage("");
+    setShouldClearCanvas(true);
     setCurser(pages.length);
+  }
+  function onClearCanvas() {
+    setShouldClearCanvas(false);
   }
   function onSelectPage(index: number) {
     setCurser(index);
@@ -67,7 +75,7 @@ export function usePlaygroundViewModel() {
     download();
   }
   function toImage() {
-    const c = document.getElementById("defaultCanvas0") as HTMLCanvasElement;
+    const c = canvasRef.current as HTMLCanvasElement;
     const canvasData = c.toDataURL("image/png");
     return canvasData.split(",")[1];
   }
@@ -104,6 +112,8 @@ export function usePlaygroundViewModel() {
     onAddNewPage,
     onSelectPage,
     onCanvasChange,
+    onClearCanvas,
+    canvasRef,
     curser,
     currentPage,
     previousPage,
@@ -112,5 +122,6 @@ export function usePlaygroundViewModel() {
     isPlayButtonDisabled,
     isRenderButtonDisabled,
     isStopButtonDisabled,
+    shouldClearCanvas,
   };
 }

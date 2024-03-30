@@ -1,3 +1,5 @@
+/** @format */
+
 import { lazy } from "react";
 import { usePlaygroundViewModel } from "./usePlaygroundViewModel";
 
@@ -33,6 +35,9 @@ export default function PlaygroundPage() {
           background="surface4"
         >
           <Canvas
+            shouldClear={vm.shouldClearCanvas}
+            onClear={vm.onClearCanvas}
+            canvasRef={vm.canvasRef}
             previousPage={vm.previousPage}
             currentPage={vm.currentPage}
             onChange={vm.onCanvasChange}
