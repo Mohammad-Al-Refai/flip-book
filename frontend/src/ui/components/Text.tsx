@@ -40,7 +40,7 @@ export function Text({
 
 interface ButtonProps {
   variant: variant;
-  children: ReactNode;
+  children?: ReactNode;
   className?: string;
   fontSize: BaseSpacingType;
   background?: variant;

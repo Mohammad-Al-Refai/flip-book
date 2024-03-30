@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { useGetGif } from "../../hooks/useGetGif";
-import { base64ToBinary, createBlob } from "../../utils/Base64Utils";
+import { useGetGif } from "../../../hooks/useGetGif";
+import { base64ToBinary, createBlob } from "../../../utils/Base64Utils";
 
 export function usePlaygroundViewModel() {
   const [currentPage, setCurrentPage] = useState("");
@@ -80,7 +80,7 @@ export function usePlaygroundViewModel() {
       }, FPS)
     );
   }
-  function onStopClicked() {
+  function onPauseClicked() {
     setIsPlaying(false);
     clearInterval(playTimer);
   }
@@ -119,7 +119,7 @@ export function usePlaygroundViewModel() {
 
   return {
     onPlayClicked,
-    onStopClicked,
+    onPauseClicked,
     onRenderClicked,
     onAddNewPage,
     onSelectPage,

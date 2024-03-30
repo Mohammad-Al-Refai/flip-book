@@ -2,6 +2,7 @@ import styled from "styled-components";
 import Button from "./Button";
 import { If } from "./If";
 import { Text } from "./Text";
+import { Icons } from "../../utils/Icons";
 
 const StyledTimeline = styled.div`
   padding: ${(props) => props.theme.horizontalSpacing.L};
@@ -63,7 +64,11 @@ export default function Timeline({
   onAdd,
   current,
   onChange,
+  onPlayClicked,
+  onPauseClicked,
+  isPlaying,
   disableAdd,
+  disablePlayButton,
 }: TimelineProps) {
   function getSrc(data: string) {
     return "data:image/png;base64," + data;
@@ -71,6 +76,27 @@ export default function Timeline({
 
   return (
     <StyledTimeline>
+      <div className="flex align-items-center justify-content-center">
+        <If condition={!isPlaying}>
+          <Button
+            className="ml-l"
+            variant="primary"
+            disabled={disablePlayButton}
+            onClick={onPlayClicked}
+          >
+            <Text fontSize="M" className={Icons.PLAY} variant="surface3"></Text>
+          </Button>
+        </If>
+        <If condition={isPlaying}>
+          <Button className="ml-l" variant="primary" onClick={onPauseClicked}>
+            <Text
+              fontSize="M"
+              className={Icons.PAUSE}
+              variant="surface3"
+            ></Text>
+          </Button>
+        </If>
+      </div>
       <StyledScrollableContainer>
         {pages.map((page, i) => (
           <StyledTimelineItem
@@ -100,6 +126,10 @@ interface TimelineProps {
   pages: string[];
   onAdd: () => void;
   onChange: (index: number) => void;
+  onPlayClicked: () => void;
+  onPauseClicked: () => void;
+  disablePlayButton: boolean;
+  isPlaying: boolean;
   disableAdd: boolean;
   current: number;
 }

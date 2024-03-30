@@ -1,7 +1,6 @@
-import { ReactNode } from "react";
 import styled from "styled-components";
 
-const StyledElement = styled.div`
+const AppContainer = styled.div`
   background-color: ${(props) => {
     return props.theme.colors.background;
   }};
@@ -9,10 +8,5 @@ const StyledElement = styled.div`
   display: flex;
   height: 100vh;
 `;
-export default function AppContainer({ children }: AppContainerProps) {
-  return <StyledElement>{children}</StyledElement>;
-}
 
-interface AppContainerProps {
-  children: ReactNode;
-}
+export default AppContainer;
