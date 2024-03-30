@@ -1,7 +1,9 @@
+import { Icons } from "../../utils/Icons";
 import { DrawingTool } from "../../utils/Tools";
 import Button from "./Button";
 import { ButtonGroup } from "./ButtonGroup";
 import Container from "./Container";
+import { Text } from "./Text";
 
 export default function Control({
   disableRenderButton,
@@ -25,7 +27,7 @@ export default function Control({
         disabled={disableRenderButton}
         onClick={onRenderClicked}
       >
-        Export GIF
+        <Text className={Icons.GIF} variant={"onPrimary"} fontSize={"L"}></Text>
       </Button>
     </Container>
   );

@@ -54,6 +54,7 @@ export function usePlaygroundViewModel() {
     if (pages.length > 0) {
       setCurrentHintPage(pages[pages.length - 1]);
     }
+    setCurrentTool(DrawingTool.Pencil);
   }
   function onClearCanvas() {
     setShouldClearCanvas(false);

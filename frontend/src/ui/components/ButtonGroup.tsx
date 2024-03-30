@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import { Text } from "./Text";
-import { DrawingTool } from "../../utils/Tools";
-import { Icons } from "../../utils/Icons";
+import { DrawingTool, getToolIcon } from "../../utils/Tools";
 
 const StyledGroupContainer = styled.div`
   display: flex;
@@ -24,16 +23,6 @@ const StyledGroupItem = styled.button<{ $isSelected: boolean }>`
 `;
 
 export function ButtonGroup({ items, current, onChange }: ButtonGroupProps) {
-  function getToolIcon(tool: DrawingTool) {
-    switch (tool) {
-      case DrawingTool.Pencil:
-        return Icons.PENCIL;
-      case DrawingTool.Eraser:
-        return Icons.ERASER;
-      default:
-        return Icons.PENCIL;
-    }
-  }
   return (
     <StyledGroupContainer>
       {items.map((item, i) => {

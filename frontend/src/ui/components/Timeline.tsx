@@ -84,7 +84,11 @@ export default function Timeline({
             disabled={disablePlayButton}
             onClick={onPlayClicked}
           >
-            <Text fontSize="L" className={Icons.PLAY} variant="surface3"></Text>
+            <Text
+              fontSize="L"
+              className={Icons.PLAY}
+              variant="onPrimary"
+            ></Text>
           </Button>
         </If>
         <If condition={isPlaying}>
@@ -96,7 +100,7 @@ export default function Timeline({
             <Text
               fontSize="L"
               className={Icons.PAUSE}
-              variant="surface3"
+              variant="onPrimary"
             ></Text>
           </Button>
         </If>

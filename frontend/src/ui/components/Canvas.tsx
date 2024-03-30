@@ -14,16 +14,15 @@ export default function Canvas({
   editorCanvasRef,
   currentTool,
 }: CanvasProps) {
-  const [x, setX] = useState(0);
-  const [y, setY] = useState(0);
   const [editorLayerContext, updateEditorLayerContext] = useState<
     CanvasRenderingContext2D | undefined
   >(undefined);
   const [hintLayerContext, updateHintLayerContext] = useState<
     CanvasRenderingContext2D | undefined
   >(undefined);
+  const [curserPosition, setCurserPosition] = useState({ x: 0, y: 0 });
   const hintPageCanvasRef = useRef<HTMLCanvasElement>(null);
-  const [isPainting, setIsPanting] = useState(false);
+  const [isMouseDown, setIsMouseDown] = useState(false);
   const color = "red";
   const lineWidth = 2;
   const [isMouseInCanvas, setMouseInCanvas] = useState(false);
@@ -89,35 +88,55 @@ export default function Canvas({
     hintLayerContext!.reset();
   }
   function mouseDown(e: React.MouseEvent<HTMLCanvasElement>) {
-    if (!isPainting) {
-      setIsPanting(true);
+    if (isPlaying) {
+      return;
     }
+    if (!isMouseDown) {
+      setIsMouseDown(true);
+    }
+    const x = e.nativeEvent.offsetX;
+    const y = e.nativeEvent.offsetY;
+
+    editorLayerContext!.beginPath();
+    editorLayerContext!.moveTo(x, y);
   }
   function mouseUp(e: React.MouseEvent<HTMLCanvasElement>) {
-    setIsPanting(false);
-    editorLayerContext!.stroke();
+    setIsMouseDown(false);
     editorLayerContext!.beginPath();
+    editorLayerContext!.stroke();
     onChange();
   }
   function mouseLeave(e: React.MouseEvent<HTMLCanvasElement>) {
     setMouseInCanvas(false);
   }
   function mouseMove(e: React.MouseEvent<HTMLCanvasElement>) {
-    const x = e.clientX - editorCanvasRef.current!.offsetLeft;
-    const y = e.clientY - editorCanvasRef.current!.offsetTop;
-    setX(e.clientX);
-    setY(e.clientY);
     if (!isMouseInCanvas) {
       setMouseInCanvas(true);
     }
-    if (!isPainting) {
+    const curserX = e.clientX;
+    const curserY = e.clientY;
+
+    setCurserPosition({
+      x: curserX,
+      y: curserY,
+    });
+    if (!isMouseDown) {
       return;
     }
+    const x = e.nativeEvent.offsetX;
+    const y = e.nativeEvent.offsetY;
 
-    editorLayerContext!.lineWidth = lineWidth;
-    editorLayerContext!.lineCap = "round";
-    editorLayerContext!.strokeStyle = color;
     editorLayerContext!.lineTo(x, y);
+    if (currentTool === DrawingTool.Eraser) {
+      editorLayerContext!.strokeStyle = "#fff";
+      editorLayerContext!.lineWidth = 30;
+    }
+    if (currentTool == DrawingTool.Pencil) {
+      editorLayerContext!.strokeStyle = color;
+      editorLayerContext!.lineWidth = 5;
+    }
+
+    editorLayerContext!.lineCap = "round";
     editorLayerContext!.stroke();
   }
 
@@ -141,8 +160,13 @@ export default function Canvas({
         width={800}
         height={600}
       />
-      <If condition={isMouseInCanvas}>
-        <Curser color={"red"} x={x} y={y} />
+      <If condition={isMouseInCanvas && !isPlaying}>
+        <Curser
+          tool={currentTool}
+          color={"red"}
+          x={curserPosition.x}
+          y={curserPosition.y}
+        />
       </If>
     </>
   );
