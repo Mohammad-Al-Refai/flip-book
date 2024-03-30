@@ -28,20 +28,20 @@ export default function PlaygroundPage() {
             shouldClearEditorLayer={vm.shouldClearCanvas}
             onClear={vm.onClearCanvas}
             editorCanvasRef={vm.canvasRef}
-            currentHintPage={vm.currentHintPage}
-            currentPage={vm.currentPage}
+            currentHintFrame={vm.currentHintFrame}
+            currentFrame={vm.currentFrame}
             currentTool={vm.currentTool}
             onChange={vm.onCanvasChange}
           />
         </Container>
         <Timeline
-          pages={vm.pages}
+          frames={vm.frames}
           current={vm.curser}
           disableAdd={vm.isAddDisabled}
           disablePlayButton={vm.isPlayButtonDisabled}
           isPlaying={vm.isPlaying}
-          onAdd={vm.onAddNewPage}
-          onChange={vm.onSelectPage}
+          onAdd={vm.onAddNewFrame}
+          onChange={vm.onSelectFrame}
           onPlayClicked={vm.onPlayClicked}
           onPauseClicked={vm.onPauseClicked}
           onDeleteFrame={vm.onDeleteFrame}

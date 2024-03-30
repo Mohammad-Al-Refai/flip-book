@@ -73,7 +73,7 @@ const StyledPreviewImage = styled.img`
 `;
 
 export default function Timeline({
-  pages,
+  frames,
   onAdd,
   current,
   onChange,
@@ -121,7 +121,7 @@ export default function Timeline({
         </If>
       </div>
       <StyledScrollableContainer>
-        {pages.map((page, i) => (
+        {frames.map((page, i) => (
           <StyledTimelineItem key={i} $highlight={current == i}>
             <If condition={!isPlaying}>
               <StyledActionsContainer>
@@ -138,7 +138,7 @@ export default function Timeline({
                     ></Text>
                   </Button>
                 </If>
-                <If condition={pages.length != 1}>
+                <If condition={frames.length != 1}>
                   <Button variant="danger" onClick={() => onDeleteFrame(i)}>
                     <Text
                       fontSize="S"
@@ -180,7 +180,7 @@ export default function Timeline({
 }
 
 interface TimelineProps {
-  pages: string[];
+  frames: string[];
   onAdd: () => void;
   onChange: (index: number) => void;
   onPlayClicked: () => void;
