@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { toPNGBase64 } from "../../utils/Base64Utils";
+import { Curser } from "./Curser";
+import { If } from "./If";
 
 export default function Canvas({
   currentPage,
@@ -10,6 +12,8 @@ export default function Canvas({
   shouldClearEditorLayer,
   editorCanvasRef,
 }: CanvasProps) {
+  const [x, setX] = useState(0);
+  const [y, setY] = useState(0);
   const [editorLayerContext, updateEditorLayerContext] = useState<
     CanvasRenderingContext2D | undefined
   >(undefined);
@@ -18,7 +22,9 @@ export default function Canvas({
   >(undefined);
   const hintPageCanvasRef = useRef<HTMLCanvasElement>(null);
   const [isPainting, setIsPanting] = useState(false);
-
+  const color = "red";
+  const lineWidth = 2;
+  const [isMouseInCanvas, setMouseInCanvas] = useState(false);
   useEffect(() => {
     const context = editorCanvasRef.current!.getContext("2d", {
       willReadFrequently: true,
@@ -91,16 +97,25 @@ export default function Canvas({
     editorLayerContext!.beginPath();
     onChange();
   }
+  function mouseLeave(e: React.MouseEvent<HTMLCanvasElement>) {
+    setMouseInCanvas(false);
+  }
   function mouseMove(e: React.MouseEvent<HTMLCanvasElement>) {
+    const x = e.clientX - editorCanvasRef.current!.offsetLeft;
+    const y = e.clientY - editorCanvasRef.current!.offsetTop;
+    setX(e.clientX);
+    setY(e.clientY);
+    if (!isMouseInCanvas) {
+      setMouseInCanvas(true);
+    }
     if (!isPainting) {
       return;
     }
-    editorLayerContext!.lineWidth = 2;
+
+    editorLayerContext!.lineWidth = lineWidth;
     editorLayerContext!.lineCap = "round";
-    editorLayerContext!.lineTo(
-      e.clientX - editorCanvasRef.current!.offsetLeft,
-      e.clientY - editorCanvasRef.current!.offsetTop
-    );
+    editorLayerContext!.strokeStyle = color;
+    editorLayerContext!.lineTo(x, y);
     editorLayerContext!.stroke();
   }
 
@@ -120,9 +135,13 @@ export default function Canvas({
         onMouseDown={mouseDown}
         onMouseUp={mouseUp}
         onMouseMove={mouseMove}
+        onMouseOut={mouseLeave}
         width={800}
         height={600}
       />
+      <If condition={isMouseInCanvas}>
+        <Curser color={"red"} x={x} y={y} />
+      </If>
     </>
   );
 }
