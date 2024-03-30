@@ -79,20 +79,28 @@ export default function Timeline({
       <div className="flex align-items-center justify-content-center">
         <If condition={!isPlaying}>
           <Button
-            className="ml-l"
+            className="ml-l p-m"
             variant="primary"
             disabled={disablePlayButton}
             onClick={onPlayClicked}
           >
-            <Text fontSize="M" className={Icons.PLAY} variant="surface3"></Text>
+            <Text
+              fontSize="L"
+              className={Icons.PLAY}
+              variant="onPrimary"
+            ></Text>
           </Button>
         </If>
         <If condition={isPlaying}>
-          <Button className="ml-l" variant="primary" onClick={onPauseClicked}>
+          <Button
+            className="ml-l  p-m"
+            variant="primary"
+            onClick={onPauseClicked}
+          >
             <Text
-              fontSize="M"
+              fontSize="L"
               className={Icons.PAUSE}
-              variant="surface3"
+              variant="onPrimary"
             ></Text>
           </Button>
         </If>
@@ -114,8 +122,12 @@ export default function Timeline({
             </If>
           </StyledTimelineItem>
         ))}
-        <StyledAdd variant="primary" disabled={disableAdd} onClick={onAdd}>
-          +
+        <StyledAdd variant="secondary" disabled={disableAdd} onClick={onAdd}>
+          <Text
+            className={Icons.ADD_PAGE}
+            variant={"onPrimary"}
+            fontSize={"L"}
+          ></Text>
         </StyledAdd>
       </StyledScrollableContainer>
     </StyledTimeline>

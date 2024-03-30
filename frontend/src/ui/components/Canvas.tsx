@@ -1,5 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { toPNGBase64 } from "../../utils/Base64Utils";
+import { Curser } from "./Curser";
+import { If } from "./If";
+import { DrawingTool } from "../../utils/Tools";
 
 export default function Canvas({
   currentPage,
@@ -9,6 +12,7 @@ export default function Canvas({
   isPlaying,
   shouldClearEditorLayer,
   editorCanvasRef,
+  currentTool,
 }: CanvasProps) {
   const [editorLayerContext, updateEditorLayerContext] = useState<
     CanvasRenderingContext2D | undefined
@@ -16,9 +20,12 @@ export default function Canvas({
   const [hintLayerContext, updateHintLayerContext] = useState<
     CanvasRenderingContext2D | undefined
   >(undefined);
+  const [curserPosition, setCurserPosition] = useState({ x: 0, y: 0 });
   const hintPageCanvasRef = useRef<HTMLCanvasElement>(null);
-  const [isPainting, setIsPanting] = useState(false);
-
+  const [isMouseDown, setIsMouseDown] = useState(false);
+  const color = "red";
+  const lineWidth = 2;
+  const [isMouseInCanvas, setMouseInCanvas] = useState(false);
   useEffect(() => {
     const context = editorCanvasRef.current!.getContext("2d", {
       willReadFrequently: true,
@@ -81,26 +88,55 @@ export default function Canvas({
     hintLayerContext!.reset();
   }
   function mouseDown(e: React.MouseEvent<HTMLCanvasElement>) {
-    if (!isPainting) {
-      setIsPanting(true);
-    }
-  }
-  function mouseUp(e: React.MouseEvent<HTMLCanvasElement>) {
-    setIsPanting(false);
-    editorLayerContext!.stroke();
-    editorLayerContext!.beginPath();
-    onChange();
-  }
-  function mouseMove(e: React.MouseEvent<HTMLCanvasElement>) {
-    if (!isPainting) {
+    if (isPlaying) {
       return;
     }
-    editorLayerContext!.lineWidth = 2;
+    if (!isMouseDown) {
+      setIsMouseDown(true);
+    }
+    const x = e.nativeEvent.offsetX;
+    const y = e.nativeEvent.offsetY;
+
+    editorLayerContext!.beginPath();
+    editorLayerContext!.moveTo(x, y);
+  }
+  function mouseUp(e: React.MouseEvent<HTMLCanvasElement>) {
+    setIsMouseDown(false);
+    editorLayerContext!.beginPath();
+    editorLayerContext!.stroke();
+    onChange();
+  }
+  function mouseLeave(e: React.MouseEvent<HTMLCanvasElement>) {
+    setMouseInCanvas(false);
+  }
+  function mouseMove(e: React.MouseEvent<HTMLCanvasElement>) {
+    if (!isMouseInCanvas) {
+      setMouseInCanvas(true);
+    }
+    const curserX = e.clientX;
+    const curserY = e.clientY;
+
+    setCurserPosition({
+      x: curserX,
+      y: curserY,
+    });
+    if (!isMouseDown) {
+      return;
+    }
+    const x = e.nativeEvent.offsetX;
+    const y = e.nativeEvent.offsetY;
+
+    editorLayerContext!.lineTo(x, y);
+    if (currentTool === DrawingTool.Eraser) {
+      editorLayerContext!.strokeStyle = "#fff";
+      editorLayerContext!.lineWidth = 30;
+    }
+    if (currentTool == DrawingTool.Pencil) {
+      editorLayerContext!.strokeStyle = color;
+      editorLayerContext!.lineWidth = 5;
+    }
+
     editorLayerContext!.lineCap = "round";
-    editorLayerContext!.lineTo(
-      e.clientX - editorCanvasRef.current!.offsetLeft,
-      e.clientY - editorCanvasRef.current!.offsetTop
-    );
     editorLayerContext!.stroke();
   }
 
@@ -120,9 +156,18 @@ export default function Canvas({
         onMouseDown={mouseDown}
         onMouseUp={mouseUp}
         onMouseMove={mouseMove}
+        onMouseOut={mouseLeave}
         width={800}
         height={600}
       />
+      <If condition={isMouseInCanvas && !isPlaying}>
+        <Curser
+          tool={currentTool}
+          color={"red"}
+          x={curserPosition.x}
+          y={curserPosition.y}
+        />
+      </If>
     </>
   );
 }
@@ -134,6 +179,7 @@ interface CanvasProps {
   shouldClearEditorLayer: boolean;
   currentPage: string;
   currentHintPage: string;
+  currentTool: DrawingTool;
 }
 export interface RectProp {
   x: number;

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useGetGif } from "../../../hooks/useGetGif";
 import { base64ToBinary, createBlob } from "../../../utils/Base64Utils";
+import { DrawingTool } from "../../../utils/Tools";
 
 export function usePlaygroundViewModel() {
   const [currentPage, setCurrentPage] = useState("");
@@ -16,6 +17,7 @@ export function usePlaygroundViewModel() {
   const [shouldClearCanvas, setShouldClearCanvas] = useState(false);
   const MIN_PAGES_TO_PROCESS = 3;
   const serviceWorker = useGetGif();
+  const [currentTool, setCurrentTool] = useState(DrawingTool.Pencil);
   const FPS = 100;
   useEffect(() => {
     if (serviceWorker.gifBase64 != "") {
@@ -52,6 +54,7 @@ export function usePlaygroundViewModel() {
     if (pages.length > 0) {
       setCurrentHintPage(pages[pages.length - 1]);
     }
+    setCurrentTool(DrawingTool.Pencil);
   }
   function onClearCanvas() {
     setShouldClearCanvas(false);
@@ -104,6 +107,9 @@ export function usePlaygroundViewModel() {
     setPages([...pages]);
     setHintPages([...hintPages]);
   }
+  function onToolChange(tool: DrawingTool) {
+    setCurrentTool(tool);
+  }
   const isAddDisabled = pages[pages.length - 1] == "";
   const isPlayButtonDisabled =
     isPlaying ||
@@ -125,6 +131,7 @@ export function usePlaygroundViewModel() {
     onSelectPage,
     onCanvasChange,
     onClearCanvas,
+    onToolChange,
     canvasRef,
     curser,
     currentPage,
@@ -137,5 +144,6 @@ export function usePlaygroundViewModel() {
     shouldClearCanvas,
     isPlaying,
     isAddDisabled,
+    currentTool,
   };
 }

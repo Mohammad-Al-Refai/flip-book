@@ -1,6 +1,5 @@
 import { lazy } from "react";
 import { usePlaygroundViewModel } from "./usePlaygroundViewModel";
-import { ToolsBox } from "../../components/ToolsBox";
 
 const AppContainer = lazy(() => import("../../components/AppContainer"));
 const Canvas = lazy(() => import("../../components/Canvas"));
@@ -17,12 +16,13 @@ export default function PlaygroundPage() {
         <Control
           disableRenderButton={vm.isRenderButtonDisabled}
           onRenderClicked={vm.onRenderClicked}
+          currentTool={vm.currentTool}
+          onToolChange={vm.onToolChange}
         />
         <Container
           className="flex justify-content-center align-items-center w-100 h-100"
           background="surface4"
         >
-          <ToolsBox />
           <Canvas
             isPlaying={vm.isPlaying}
             shouldClearEditorLayer={vm.shouldClearCanvas}
@@ -30,6 +30,7 @@ export default function PlaygroundPage() {
             editorCanvasRef={vm.canvasRef}
             currentHintPage={vm.currentHintPage}
             currentPage={vm.currentPage}
+            currentTool={vm.currentTool}
             onChange={vm.onCanvasChange}
           />
         </Container>
