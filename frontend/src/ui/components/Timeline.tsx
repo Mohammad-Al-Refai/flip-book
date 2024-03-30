@@ -5,21 +5,23 @@ import { Text } from "./Text";
 
 const StyledTimeline = styled.div`
   padding: ${(props) => props.theme.horizontalSpacing.L};
-  height: 100vh;
   display: flex;
-  width: 25%;
+  width: 100%;
   min-width: 100px;
+  overflow-inline: hidden;
   flex-direction: column;
   background-color: ${(props) => props.theme.colors.surface3};
 `;
 const StyledTimelineItem = styled.div<{ $highlight: boolean }>`
-  filter: ${(props) => (props.$highlight ? "contrast(50%);" : "unset")};
+  transition: 0.1s;
   overflow: hidden;
   display: inline;
-  max-height: 200px;
-  max-width: 200px;
-  min-height: 200px;
-  min-width: 200px;
+  border: ${(props) =>
+    props.$highlight ? `2px solid ${props.theme.colors.primary}` : "unset"};
+  max-height: 70px;
+  max-width: 70px;
+  min-height: 70px;
+  min-width: 70px;
   background-color: ${(props) =>
     props.$highlight
       ? props.theme.colors.secondary
@@ -31,6 +33,10 @@ const StyledTimelineItem = styled.div<{ $highlight: boolean }>`
   border-radius: 4px;
   margin: ${(props) => props.theme.surrounding.S};
   cursor: pointer;
+  &:hover {
+    scale: 1.1;
+    box-shadow: 0px 0px 15px 3px #2f2f2f;
+  }
 `;
 const StyledAdd = styled(Button)`
   background-color: ${(props) => props.theme.colors.primary};
@@ -46,8 +52,7 @@ const StyledAdd = styled(Button)`
 const StyledScrollableContainer = styled.div`
   display: flex;
   align-items: center;
-  flex-direction: column;
-  overflow-y: auto;
+  overflow-x: auto;
 `;
 const StyledPreviewImage = styled.img`
   width: 100%;
@@ -77,8 +82,8 @@ export default function Timeline({
               <StyledPreviewImage src={getSrc(page)} />
             </If>
             <If condition={page == ""}>
-              <Text fontSize="M" variant="primary">
-                Draw to see changes
+              <Text fontSize="S" variant="primary">
+                Empty
               </Text>
             </If>
           </StyledTimelineItem>
