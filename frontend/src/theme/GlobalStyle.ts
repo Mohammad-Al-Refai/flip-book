@@ -128,7 +128,8 @@ function initGlobalCss() {
 const GlobalStyle = createGlobalStyle`
 /* width */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 8px;
+  height: 8px;
 }
 
 /* Track */

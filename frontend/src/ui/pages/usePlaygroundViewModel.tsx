@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useGetGif } from "../../hooks/useGetGif";
+import { base64ToBinary, createBlob } from "../../utils/Base64Utils";
 
 export function usePlaygroundViewModel() {
   const [currentPage, setCurrentPage] = useState("");
@@ -13,9 +14,9 @@ export function usePlaygroundViewModel() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isRendering, setIsRendering] = useState(false);
   const [shouldClearCanvas, setShouldClearCanvas] = useState(false);
-
+  const MIN_PAGES_TO_PROCESS = 3;
   const serviceWorker = useGetGif();
-  const FPS = 30;
+  const FPS = 100;
   useEffect(() => {
     if (serviceWorker.gifBase64 != "") {
       const base64String = serviceWorker.gifBase64;
@@ -76,7 +77,7 @@ export function usePlaygroundViewModel() {
         setCurser((prev) => {
           return prev + 1;
         });
-      }, FPS * 10)
+      }, FPS)
     );
   }
   function onStopClicked() {
@@ -92,22 +93,9 @@ export function usePlaygroundViewModel() {
     return canvasData.split(",")[1];
   }
   function download() {
-    console.log(pages);
     serviceWorker.call(pages);
   }
-  function base64ToBinary(base64String: string) {
-    const bytes = atob(base64String);
-    const binary = new Array(bytes.length);
-    for (let i = 0; i < bytes.length; i++) {
-      binary[i] = bytes.charCodeAt(i);
-    }
-    return new Uint8Array(binary);
-  }
 
-  function createBlob(binaryData: any) {
-    const blob = new Blob([binaryData], { type: "image/gif" });
-    return blob;
-  }
   function onCanvasChange() {
     const data = toImage();
     setCurrentPage(data);
@@ -116,11 +104,19 @@ export function usePlaygroundViewModel() {
     setPages([...pages]);
     setHintPages([...hintPages]);
   }
-
-  const isPlayButtonDisabled = isPlaying || pages.length < 3 || isRendering;
-  const isRenderButtonDisabled = isPlaying || pages.length < 3 || isRendering;
-  const isStopButtonDisabled = !isPlaying || isRendering;
   const isAddDisabled = pages[pages.length - 1] == "";
+  const isPlayButtonDisabled =
+    isPlaying ||
+    pages.length < MIN_PAGES_TO_PROCESS ||
+    isRendering ||
+    isAddDisabled;
+  const isRenderButtonDisabled =
+    isPlaying ||
+    pages.length < MIN_PAGES_TO_PROCESS ||
+    isRendering ||
+    isAddDisabled;
+  const isStopButtonDisabled = !isPlaying || isRendering;
+
   return {
     onPlayClicked,
     onStopClicked,

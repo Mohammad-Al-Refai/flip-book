@@ -1,5 +1,6 @@
 import { lazy } from "react";
 import { usePlaygroundViewModel } from "./usePlaygroundViewModel";
+import { ToolsBox } from "../components/ToolsBox";
 
 const AppContainer = lazy(() => import("../components/AppContainer"));
 const Canvas = lazy(() => import("../components/Canvas"));
@@ -12,14 +13,6 @@ export default function PlaygroundPage() {
 
   return (
     <AppContainer>
-      <Timeline
-        pages={vm.pages}
-        current={vm.curser}
-        onAdd={vm.onAddNewPage}
-        onChange={vm.onSelectPage}
-        disableAdd={vm.isAddDisabled}
-      />
-
       <Container className="flex column w-100">
         <Control
           disablePlayButton={vm.isPlayButtonDisabled}
@@ -33,6 +26,7 @@ export default function PlaygroundPage() {
           className="flex justify-content-center align-items-center w-100 h-100"
           background="surface4"
         >
+          <ToolsBox />
           <Canvas
             isPlaying={vm.isPlaying}
             shouldClearEditorLayer={vm.shouldClearCanvas}
@@ -43,6 +37,13 @@ export default function PlaygroundPage() {
             onChange={vm.onCanvasChange}
           />
         </Container>
+        <Timeline
+          pages={vm.pages}
+          current={vm.curser}
+          onAdd={vm.onAddNewPage}
+          onChange={vm.onSelectPage}
+          disableAdd={vm.isAddDisabled}
+        />
       </Container>
     </AppContainer>
   );

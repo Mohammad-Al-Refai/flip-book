@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { toPNGBase64 } from "../../utils/Base64Utils";
 
 export default function Canvas({
   currentPage,
@@ -60,9 +61,6 @@ export default function Canvas({
     hintLayerContext!.drawImage(hintImage, 0, 0);
   }, [currentHintPage]);
 
-  function toPNGBase64(data: string) {
-    return "data:image/png;base64," + data;
-  }
   useEffect(() => {
     if (editorLayerContext == undefined) {
       return;
