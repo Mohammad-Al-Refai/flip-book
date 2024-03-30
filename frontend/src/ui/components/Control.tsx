@@ -23,11 +23,15 @@ export default function Control({
       />
       <Button
         className="ml-l"
-        variant="primary"
+        variant="tertiary"
         disabled={disableRenderButton}
         onClick={onRenderClicked}
       >
-        <Text className={Icons.GIF} variant={"onPrimary"} fontSize={"L"}></Text>
+        <Text
+          className={Icons.GIF}
+          variant={"onTertiary"}
+          fontSize={"L"}
+        ></Text>
       </Button>
     </Container>
   );
