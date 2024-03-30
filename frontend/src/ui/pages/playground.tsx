@@ -1,3 +1,5 @@
+/** @format */
+
 import { lazy } from "react";
 import { usePlaygroundViewModel } from "./usePlaygroundViewModel";
 
@@ -17,6 +19,7 @@ export default function PlaygroundPage() {
         current={vm.curser}
         onAdd={vm.onAddNewPage}
         onChange={vm.onSelectPage}
+        disableAdd={vm.isAddDisabled}
       />
 
       <Container className="flex column w-100">
@@ -32,7 +35,15 @@ export default function PlaygroundPage() {
           className="flex justify-content-center align-items-center w-100 h-100"
           background="surface4"
         >
-          <Canvas page={vm.currentPage} onChange={vm.onCanvasChange} />
+          <Canvas
+            isPlaying={vm.isPlaying}
+            shouldClear={vm.shouldClearCanvas}
+            onClear={vm.onClearCanvas}
+            canvasRef={vm.canvasRef}
+            currentHintPage={vm.currentHintPage}
+            currentPage={vm.currentPage}
+            onChange={vm.onCanvasChange}
+          />
         </Container>
       </Container>
     </AppContainer>

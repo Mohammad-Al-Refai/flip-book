@@ -1,3 +1,5 @@
+/** @format */
+
 import styled from "styled-components";
 import Button from "./Button";
 import { If } from "./If";
@@ -58,6 +60,7 @@ export default function Timeline({
   onAdd,
   current,
   onChange,
+  disableAdd,
 }: TimelineProps) {
   function getSrc(data: string) {
     return "data:image/png;base64," + data;
@@ -82,7 +85,7 @@ export default function Timeline({
             </If>
           </StyledTimelineItem>
         ))}
-        <StyledAdd variant="primary" onClick={onAdd}>
+        <StyledAdd variant="primary" disabled={disableAdd} onClick={onAdd}>
           +
         </StyledAdd>
       </StyledScrollableContainer>
@@ -94,6 +97,6 @@ interface TimelineProps {
   pages: string[];
   onAdd: () => void;
   onChange: (index: number) => void;
-
+  disableAdd: boolean;
   current: number;
 }

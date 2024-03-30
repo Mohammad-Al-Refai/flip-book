@@ -1,74 +1,149 @@
 /** @format */
 
-import { P5CanvasInstance, ReactP5Wrapper } from "@p5-wrapper/react";
-import { Image } from "p5";
+import { useEffect, useRef, useState } from "react";
+import { If } from "./If";
 
-export default function Canvas({ page, onChange }: CanvasProps) {
-  function sketch(p5: P5CanvasInstance) {
-    let currentColor = "red";
-    let isStartDrawing = false;
-    let isFinishDrawing = false;
-    let isChanged = false;
-    let img: Image | undefined = undefined;
-    p5.preload = () => {
-      if (page != "") {
-        p5.loadImage("data:image/png;base64," + page, (image) => {
-          img = image;
-        });
-      }
-    };
-    p5.setup = () => {
-      p5.createCanvas(800, 600);
-      p5.background(255);
-      p5.colorMode(p5.RGB);
-      p5.noStroke();
-      if (img != undefined) {
-        p5.image(img, 0, 0, img.width / 2, img.height / 2);
-      }
-    };
-    p5.draw = () => {
-      if (isMouseNotPressed() && isChanged) {
-        isFinishDrawing = true;
-        isStartDrawing = false;
-      }
-      if (isMousePressed()) {
-        p5.stroke(currentColor);
-        p5.strokeWeight(10);
-        p5.line(p5.mouseX, p5.mouseY, p5.pmouseX, p5.pmouseY);
-        isStartDrawing = true;
-        isChanged = true;
-      }
-      if (isChanged && isFinishDrawing) {
-        onChange();
-        isChanged = false;
-        isFinishDrawing = false;
-      }
-      function isMousePressed() {
-        return (
-          p5.mouseIsPressed &&
-          p5.mouseX > 0 &&
-          p5.mouseX < p5.width &&
-          p5.mouseY > 0 &&
-          p5.mouseY < p5.height
-        );
-      }
-      function isMouseNotPressed() {
-        return (
-          !p5.mouseIsPressed &&
-          p5.mouseX > 0 &&
-          p5.mouseX < p5.width &&
-          p5.mouseY > 0 &&
-          p5.mouseY < p5.height
-        );
-      }
-    };
+export default function Canvas({
+  currentPage,
+  onChange,
+  currentHintPage,
+  onClear,
+  isPlaying,
+  shouldClear,
+  canvasRef,
+}: CanvasProps) {
+  const [ctx, setCtx] = useState<CanvasRenderingContext2D | undefined>(
+    undefined
+  );
+  const [previousCtx, setPreviousCtx] = useState<
+    CanvasRenderingContext2D | undefined
+  >(undefined);
+  const previousPageCanvasRef = useRef<HTMLCanvasElement>(null);
+  const [isPainting, setIsPanting] = useState(false);
+
+  useEffect(() => {
+    const context = canvasRef.current!.getContext("2d", {
+      willReadFrequently: true,
+    });
+    if (context != null) {
+      setCtx(context);
+    }
+    const previousContext = previousPageCanvasRef.current!.getContext("2d");
+    if (previousContext != null) {
+      setPreviousCtx(previousContext);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (shouldClear) {
+      clear();
+      onClear();
+    }
+  }, [shouldClear]);
+
+  useEffect(() => {
+    if (currentPage == "") {
+      return;
+    }
+    const currentImage = new Image();
+    currentImage.src = toPNGBase64(currentPage);
+    ctx!.drawImage(currentImage, 0, 0);
+  }, [currentPage]);
+
+  useEffect(() => {
+    if (!currentHintPage) {
+      return;
+    }
+    previousCtx?.clearRect(
+      0,
+      0,
+      canvasRef.current!.width,
+      canvasRef.current!.height
+    );
+    const hintImage = new Image();
+    hintImage.src = toPNGBase64(currentHintPage);
+    previousCtx!.drawImage(hintImage, 0, 0);
+  }, [currentHintPage]);
+
+  function toPNGBase64(data: string) {
+    return "data:image/png;base64," + data;
+  }
+  useEffect(() => {
+    if (ctx == undefined) {
+      return;
+    }
+    clear();
+  }, [ctx]);
+
+  function clear() {
+    ctx!.fillStyle = "white";
+    ctx!.fillRect(0, 0, canvasRef.current!.width, canvasRef.current!.height);
+  }
+  function mouseDown(e: React.MouseEvent<HTMLCanvasElement>) {
+    if (!isPainting) {
+      setIsPanting(true);
+    }
+  }
+  function mouseUp(e: React.MouseEvent<HTMLCanvasElement>) {
+    setIsPanting(false);
+    ctx!.stroke();
+    ctx!.beginPath();
+    // previousCtx!.stroke();
+    // previousCtx!.beginPath();
+    onChange();
+  }
+  function mouseMove(e: React.MouseEvent<HTMLCanvasElement>) {
+    if (!isPainting) {
+      return;
+    }
+    ctx!.lineWidth = 2;
+    ctx!.lineCap = "round";
+    ctx!.lineTo(
+      e.clientX - canvasRef.current!.offsetLeft,
+      e.clientY - canvasRef.current!.offsetTop
+    );
+    ctx!.stroke();
+
+    // previousCtx!.lineWidth = 2;
+    // previousCtx!.lineCap = "round";
+    // previousCtx!.lineTo(
+    //   e.clientX - canvasRef.current!.offsetLeft,
+    //   e.clientY - canvasRef.current!.offsetTop
+    // );
+    // previousCtx!.stroke();
   }
 
-  return <ReactP5Wrapper sketch={sketch} />;
+  return (
+    <>
+      <canvas
+        onMouseDown={mouseDown}
+        onMouseUp={mouseUp}
+        onMouseMove={mouseMove}
+        ref={canvasRef}
+        width={800}
+        height={600}
+      />
+      <canvas
+        className="previous-canvas"
+        style={{ display: isPlaying ? "none" : "block" }}
+        ref={previousPageCanvasRef}
+        onMouseDown={mouseDown}
+        onMouseUp={mouseUp}
+        onMouseMove={mouseMove}
+        width={800}
+        height={600}
+      />
+    </>
+  );
 }
 interface CanvasProps {
   onChange: () => void;
-  page: string;
+  onClear: () => void;
+  isPlaying: boolean;
+  canvasRef: React.RefObject<HTMLCanvasElement>;
+  shouldClear: boolean;
+  currentPage: string;
+  currentHintPage: string;
 }
 export interface RectProp {
   x: number;
