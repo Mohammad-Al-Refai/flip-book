@@ -1,12 +1,12 @@
 import { lazy } from "react";
 import { usePlaygroundViewModel } from "./usePlaygroundViewModel";
-import { ToolsBox } from "../components/ToolsBox";
+import { ToolsBox } from "../../components/ToolsBox";
 
-const AppContainer = lazy(() => import("../components/AppContainer"));
-const Canvas = lazy(() => import("../components/Canvas"));
-const Container = lazy(() => import("../components/Container"));
-const Control = lazy(() => import("../components/Control"));
-const Timeline = lazy(() => import("../components/Timeline"));
+const AppContainer = lazy(() => import("../../components/AppContainer"));
+const Canvas = lazy(() => import("../../components/Canvas"));
+const Container = lazy(() => import("../../components/Container"));
+const Control = lazy(() => import("../../components/Control"));
+const Timeline = lazy(() => import("../../components/Timeline"));
 
 export default function PlaygroundPage() {
   const vm = usePlaygroundViewModel();
@@ -15,12 +15,8 @@ export default function PlaygroundPage() {
     <AppContainer>
       <Container className="flex column w-100">
         <Control
-          disablePlayButton={vm.isPlayButtonDisabled}
           disableRenderButton={vm.isRenderButtonDisabled}
-          disableStopButton={vm.isStopButtonDisabled}
           onRenderClicked={vm.onRenderClicked}
-          onPlayClicked={vm.onPlayClicked}
-          onStopClicked={vm.onStopClicked}
         />
         <Container
           className="flex justify-content-center align-items-center w-100 h-100"
@@ -40,9 +36,13 @@ export default function PlaygroundPage() {
         <Timeline
           pages={vm.pages}
           current={vm.curser}
+          disableAdd={vm.isAddDisabled}
+          disablePlayButton={vm.isPlayButtonDisabled}
+          isPlaying={vm.isPlaying}
           onAdd={vm.onAddNewPage}
           onChange={vm.onSelectPage}
-          disableAdd={vm.isAddDisabled}
+          onPlayClicked={vm.onPlayClicked}
+          onPauseClicked={vm.onPauseClicked}
         />
       </Container>
     </AppContainer>
