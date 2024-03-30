@@ -125,17 +125,19 @@ export default function Timeline({
           <StyledTimelineItem key={i} $highlight={current == i}>
             <If condition={!isPlaying}>
               <StyledActionsContainer>
-                <Button
-                  className="mr-m"
-                  variant="tertiary"
-                  onClick={() => onCopyFrame(i)}
-                >
-                  <Text
-                    fontSize="S"
-                    className={Icons.COPY}
-                    variant="onTertiary"
-                  ></Text>
-                </Button>
+                <If condition={page != ""}>
+                  <Button
+                    className="mr-m"
+                    variant="tertiary"
+                    onClick={() => onCopyFrame(i)}
+                  >
+                    <Text
+                      fontSize="S"
+                      className={Icons.COPY}
+                      variant="onTertiary"
+                    ></Text>
+                  </Button>
+                </If>
                 <If condition={pages.length != 1}>
                   <Button variant="danger" onClick={() => onDeleteFrame(i)}>
                     <Text

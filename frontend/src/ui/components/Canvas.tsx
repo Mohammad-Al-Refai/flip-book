@@ -51,6 +51,9 @@ export default function Canvas({
       return;
     }
     const currentImage = new Image();
+    currentImage.onerror = () => {
+      console.log("Error while loading currentImage");
+    };
     currentImage.src = toPNGBase64(currentPage);
     editorLayerContext!.drawImage(currentImage, 0, 0);
   }, [currentPage]);
@@ -64,6 +67,9 @@ export default function Canvas({
       return;
     }
     const hintImage = new Image();
+    hintImage.onerror = () => {
+      console.log("Error while loading hintImage");
+    };
     hintImage.src = toPNGBase64(currentHintPage);
     hintLayerContext!.drawImage(hintImage, 0, 0);
   }, [currentHintPage]);

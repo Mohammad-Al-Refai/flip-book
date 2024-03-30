@@ -42,7 +42,6 @@ export function usePlaygroundViewModel() {
       return;
     }
     setCurrentPage(pages[curser]);
-    setCurrentHintPage(hintPages[curser - 1]);
   }, [curser, isPlaying]);
 
   function onAddNewPage() {
@@ -122,7 +121,6 @@ export function usePlaygroundViewModel() {
         setCurrentPage(newPages[curser - 1]);
         setCurrentHintPage(newPages[curser - 2]);
       }
-
       setHintPages([...newHintPages]);
       return [...newPages];
     });
@@ -132,7 +130,15 @@ export function usePlaygroundViewModel() {
     const targetFrame = pages[index];
     const left = pages.slice(0, index);
     const right = pages.slice(index, pages.length);
-    setPages([...left, targetFrame, ...right]);
+    const newIndex = left.push(targetFrame);
+    const newPages = [...left, ...right];
+    setPages(() => {
+      setCurser(newIndex);
+      setCurrentPage(left[left.length - 1]);
+      setCurrentHintPage(left[left.length - 1]);
+      setHintPages(newPages);
+      return newPages;
+    });
   }
 
   const isAddDisabled = pages[pages.length - 1] == "";
