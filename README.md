@@ -6,7 +6,7 @@ Drawing frame by frame to make animations and convert them to gif file
 
 ## Using
 - React js
-- Typesript
+- Typescript
 - Webassembly
 - Golang
 
