@@ -5,9 +5,10 @@ import { useGetGif } from "../../hooks/useGetGif";
 
 export function usePlaygroundViewModel() {
   const [currentPage, setCurrentPage] = useState("");
-  const [previousPage, setPreviousPage] = useState("");
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [pages, setPages] = useState([""]);
+  const [hintPages, setHintPages] = useState([""]);
+  const [currentHintPage, setCurrentHintPage] = useState("");
   const [curser, setCurser] = useState(0);
   const [selectedPage, setSelectedPage] = useState(pages[0]);
   const [playTimer, setPlayTimer] = useState(0);
@@ -41,19 +42,27 @@ export function usePlaygroundViewModel() {
     }
     setCurrentPage(pages[curser]);
   }, [curser, isPlaying]);
+
   function onAddNewPage() {
     setPages([...pages, ""]);
-    setPreviousPage(toImage());
     setCurrentPage("");
     setShouldClearCanvas(true);
+    setHintPages([...hintPages, pages[pages.length - 1]]);
     setCurser(pages.length);
+    if (pages.length > 0) {
+      setCurrentHintPage(pages[pages.length - 1]);
+    }
   }
   function onClearCanvas() {
     setShouldClearCanvas(false);
   }
   function onSelectPage(index: number) {
+    if (pages[pages.length - 1] == "") {
+      return;
+    }
     setCurser(index);
     setSelectedPage(pages[index]);
+    setCurrentHintPage(hintPages[index - 1]);
     setCurrentPage(pages[index]);
   }
   function onPlayClicked() {
@@ -100,11 +109,14 @@ export function usePlaygroundViewModel() {
     const data = toImage();
     setCurrentPage(data);
     pages[curser] = data;
+    hintPages[curser] = data;
     setPages([...pages]);
+    setHintPages([...hintPages]);
   }
   const isPlayButtonDisabled = isPlaying || pages.length < 3 || isRendering;
   const isRenderButtonDisabled = isPlaying || pages.length < 3 || isRendering;
   const isStopButtonDisabled = !isPlaying || isRendering;
+  const isAddDisabled = pages[pages.length - 1] == "";
   return {
     onPlayClicked,
     onStopClicked,
@@ -116,12 +128,14 @@ export function usePlaygroundViewModel() {
     canvasRef,
     curser,
     currentPage,
-    previousPage,
+    currentHintPage,
     selectedPage,
     pages,
     isPlayButtonDisabled,
     isRenderButtonDisabled,
     isStopButtonDisabled,
     shouldClearCanvas,
+    isPlaying,
+    isAddDisabled,
   };
 }

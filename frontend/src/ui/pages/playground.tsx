@@ -19,6 +19,7 @@ export default function PlaygroundPage() {
         current={vm.curser}
         onAdd={vm.onAddNewPage}
         onChange={vm.onSelectPage}
+        disableAdd={vm.isAddDisabled}
       />
 
       <Container className="flex column w-100">
@@ -35,10 +36,11 @@ export default function PlaygroundPage() {
           background="surface4"
         >
           <Canvas
+            isPlaying={vm.isPlaying}
             shouldClear={vm.shouldClearCanvas}
             onClear={vm.onClearCanvas}
             canvasRef={vm.canvasRef}
-            previousPage={vm.previousPage}
+            currentHintPage={vm.currentHintPage}
             currentPage={vm.currentPage}
             onChange={vm.onCanvasChange}
           />
