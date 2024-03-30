@@ -1,5 +1,3 @@
-/** @format */
-
 import { useEffect, useRef, useState } from "react";
 import { useGetGif } from "../../hooks/useGetGif";
 
@@ -31,7 +29,7 @@ export function usePlaygroundViewModel() {
     }
   }, [serviceWorker.gifBase64]);
 
-  //Track curser & isPlaying to update the currentPage
+  //Track curser & isPlaying to update the currentPage & hintPage
   useEffect(() => {
     if (!isPlaying) {
       return;
@@ -41,6 +39,7 @@ export function usePlaygroundViewModel() {
       return;
     }
     setCurrentPage(pages[curser]);
+    setCurrentHintPage(hintPages[curser - 1]);
   }, [curser, isPlaying]);
 
   function onAddNewPage() {
@@ -62,8 +61,12 @@ export function usePlaygroundViewModel() {
     }
     setCurser(index);
     setSelectedPage(pages[index]);
-    setCurrentHintPage(hintPages[index - 1]);
     setCurrentPage(pages[index]);
+    if (hintPages[index - 1]) {
+      setCurrentHintPage(hintPages[index - 1]);
+    } else {
+      setCurrentHintPage("");
+    }
   }
   function onPlayClicked() {
     setCurser((prev) => (prev = 0));
@@ -113,6 +116,7 @@ export function usePlaygroundViewModel() {
     setPages([...pages]);
     setHintPages([...hintPages]);
   }
+
   const isPlayButtonDisabled = isPlaying || pages.length < 3 || isRendering;
   const isRenderButtonDisabled = isPlaying || pages.length < 3 || isRendering;
   const isStopButtonDisabled = !isPlaying || isRendering;

@@ -8,6 +8,11 @@ canvas {
   position: absolute;
 }
 
-.previous-canvas {
+.hint-canvas{
+ visibility: visible;
   opacity: 0.1;
+}
+
+.hide-hint-canvas{
+ visibility: hidden;
 }
