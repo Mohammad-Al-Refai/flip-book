@@ -27,7 +27,6 @@ export default function PlaygroundPage() {
             isPlaying={vm.isPlaying}
             shouldClearEditorLayer={vm.shouldClearCanvas}
             onClear={vm.onClearCanvas}
-            editorCanvasRef={vm.canvasRef}
             currentHintFrame={vm.currentHintFrame}
             currentFrame={vm.currentFrame}
             currentTool={vm.currentTool}

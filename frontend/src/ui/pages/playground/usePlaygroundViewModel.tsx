@@ -1,11 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useGetGif } from "../../../hooks/useGetGif";
 import { base64ToBinary, createBlob } from "../../../utils/Base64Utils";
 import { DrawingTool } from "../../../utils/Tools";
 
 export function usePlaygroundViewModel() {
   const [currentFrame, setCurrentFrame] = useState("");
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const [frames, setFrames] = useState([""]);
   const [hintFrames, setHintFrames] = useState([""]);
   const [currentHintFrame, setCurrentHintFrame] = useState("");
@@ -90,20 +89,15 @@ export function usePlaygroundViewModel() {
   function onRenderClicked() {
     download();
   }
-  function toImage() {
-    const c = canvasRef.current as HTMLCanvasElement;
-    const canvasData = c.toDataURL("image/png");
-    return canvasData.split(",")[1];
-  }
+
   function download() {
     serviceWorker.call(frames);
   }
 
-  function onCanvasChange() {
-    const data = toImage();
-    setCurrentFrame(data);
-    frames[curser] = data;
-    hintFrames[curser] = data;
+  function onCanvasChange(newChanges: string) {
+    setCurrentFrame(newChanges);
+    frames[curser] = newChanges;
+    hintFrames[curser] = newChanges;
     setFrames([...frames]);
     setHintFrames([...hintFrames]);
   }
@@ -166,7 +160,6 @@ export function usePlaygroundViewModel() {
     onToolChange,
     onDeleteFrame,
     onCopyFrame,
-    canvasRef,
     curser,
     currentFrame,
     currentHintFrame,
