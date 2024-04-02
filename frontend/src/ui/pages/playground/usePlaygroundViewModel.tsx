@@ -40,8 +40,7 @@ export function usePlaygroundViewModel() {
       setCurser((prev) => (prev = 0));
       return;
     }
-    setCurrentFrame(frames[curser]);
-    setCurrentHintFrame(hintFrames[curser]);
+    goTo(curser);
   }, [curser, isPlaying]);
 
   function onAddNewFrame() {
@@ -62,14 +61,7 @@ export function usePlaygroundViewModel() {
     if (frames[frames.length - 1] == "") {
       return;
     }
-    setCurser(index);
-    setSelectedFrame(frames[index]);
-    setCurrentFrame(frames[index]);
-    if (hintFrames[index - 1]) {
-      setCurrentHintFrame(hintFrames[index - 1]);
-    } else {
-      setCurrentHintFrame("");
-    }
+    goTo(index);
   }
   function onPlayClicked() {
     setCurser((prev) => (prev = 0));
@@ -109,12 +101,9 @@ export function usePlaygroundViewModel() {
       const newFrames = frames.filter((_, i) => i != index);
       const newHintFrames = frames.filter((_, i) => i != index);
       if (index > curser) {
-        setCurser(curser);
-        setCurrentHintFrame(newFrames[curser - 1]);
+        goTo(curser);
       } else {
-        setCurser(curser - 1);
-        setCurrentFrame(newFrames[curser - 1]);
-        setCurrentHintFrame(newFrames[curser - 2]);
+        goTo(curser - 1);
       }
       setHintFrames([...newHintFrames]);
       return [...newFrames];
@@ -128,14 +117,25 @@ export function usePlaygroundViewModel() {
     const newIndex = left.push(targetFrame);
     const newFrames = [...left, ...right];
     setFrames(() => {
-      setCurser(newIndex);
-      setCurrentFrame(left[left.length - 1]);
-      setCurrentHintFrame(left[left.length - 1]);
       setHintFrames(newFrames);
       return newFrames;
     });
+    goTo(newIndex);
   }
-
+  async function goTo(index: number) {
+    console.log({
+      current: index,
+      frames: frames.map((v) => v.substring(0, 3)),
+      hints: hintFrames.map((v) => v.substring(0, 3)),
+    });
+    setCurser(index);
+    setCurrentFrame(frames[index]);
+    if (hintFrames[index - 1]) {
+      setCurrentHintFrame(hintFrames[index - 1]);
+    } else {
+      setCurrentHintFrame("");
+    }
+  }
   const isAddDisabled = frames[frames.length - 1] == "";
   const isPlayButtonDisabled =
     isPlaying ||
