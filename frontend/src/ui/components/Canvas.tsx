@@ -11,7 +11,6 @@ export default function Canvas({
   onClear,
   isPlaying,
   shouldClearEditorLayer,
-  editorCanvasRef,
   currentTool,
 }: CanvasProps) {
   const [editorLayerContext, updateEditorLayerContext] = useState<
@@ -22,6 +21,7 @@ export default function Canvas({
   >(undefined);
   const [curserPosition, setCurserPosition] = useState({ x: 0, y: 0 });
   const hintPageCanvasRef = useRef<HTMLCanvasElement>(null);
+  const editorCanvasRef = useRef<HTMLCanvasElement>(null);
   const [isMouseDown, setIsMouseDown] = useState(false);
   const color = "red";
   const lineWidth = 2;
@@ -106,11 +106,16 @@ export default function Canvas({
     editorLayerContext!.beginPath();
     editorLayerContext!.moveTo(x, y);
   }
+  function toImage() {
+    const c = editorCanvasRef.current as HTMLCanvasElement;
+    const canvasData = c.toDataURL("image/png");
+    return canvasData.split(",")[1];
+  }
   function mouseUp(e: React.MouseEvent<HTMLCanvasElement>) {
     setIsMouseDown(false);
     editorLayerContext!.beginPath();
     editorLayerContext!.stroke();
-    onChange();
+    onChange(toImage());
   }
   function mouseLeave(e: React.MouseEvent<HTMLCanvasElement>) {
     setMouseInCanvas(false);
@@ -178,10 +183,9 @@ export default function Canvas({
   );
 }
 interface CanvasProps {
-  onChange: () => void;
+  onChange: (data: string) => void;
   onClear: () => void;
   isPlaying: boolean;
-  editorCanvasRef: React.RefObject<HTMLCanvasElement>;
   shouldClearEditorLayer: boolean;
   currentFrame: string;
   currentHintFrame: string;

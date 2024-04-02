@@ -1,11 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useGetGif } from "../../../hooks/useGetGif";
 import { base64ToBinary, createBlob } from "../../../utils/Base64Utils";
 import { DrawingTool } from "../../../utils/Tools";
 
 export function usePlaygroundViewModel() {
   const [currentFrame, setCurrentFrame] = useState("");
-  const canvasRef = useRef<HTMLCanvasElement>(null);
   const [frames, setFrames] = useState([""]);
   const [hintFrames, setHintFrames] = useState([""]);
   const [currentHintFrame, setCurrentHintFrame] = useState("");
@@ -17,6 +16,14 @@ export function usePlaygroundViewModel() {
   const [shouldClearCanvas, setShouldClearCanvas] = useState(false);
   const MIN_FRAMES_TO_PROCESS = 3;
   const serviceWorker = useGetGif();
+  const [isAddedNewFrame, setIsAddedNewFrame] = useState({
+    yes: false,
+    index: 0,
+  });
+  const [isDeletedFrame, setIsDeletedFrame] = useState({
+    yes: false,
+    index: 0,
+  });
   const [currentTool, setCurrentTool] = useState(DrawingTool.Pencil);
   const FPS = 100;
   useEffect(() => {
@@ -41,9 +48,36 @@ export function usePlaygroundViewModel() {
       setCurser((prev) => (prev = 0));
       return;
     }
-    setCurrentFrame(frames[curser]);
-    setCurrentHintFrame(hintFrames[curser]);
+    goTo(curser);
   }, [curser, isPlaying]);
+  useEffect(() => {
+    if (isAddedNewFrame.yes) {
+      goTo(isAddedNewFrame.index);
+      setIsAddedNewFrame({ yes: false, index: 0 });
+    }
+  }, [isAddedNewFrame]);
+  useEffect(() => {
+    if (!isDeletedFrame.yes) {
+      return;
+    }
+    const index = isDeletedFrame.index;
+    if (index == 0 && curser == 0) {
+      goTo(0);
+    }
+    if (index == curser && curser == frames.length) {
+      goTo(frames.length - 1);
+    }
+    if (index > 0 && index < frames.length) {
+      goTo(index);
+    }
+    if (index != curser && curser == frames.length) {
+      goTo(curser - 1);
+    }
+    setIsDeletedFrame({
+      yes: false,
+      index: 0,
+    });
+  }, [isDeletedFrame, curser, frames]);
 
   function onAddNewFrame() {
     setFrames([...frames, ""]);
@@ -63,14 +97,7 @@ export function usePlaygroundViewModel() {
     if (frames[frames.length - 1] == "") {
       return;
     }
-    setCurser(index);
-    setSelectedFrame(frames[index]);
-    setCurrentFrame(frames[index]);
-    if (hintFrames[index - 1]) {
-      setCurrentHintFrame(hintFrames[index - 1]);
-    } else {
-      setCurrentHintFrame("");
-    }
+    goTo(index);
   }
   function onPlayClicked() {
     setCurser((prev) => (prev = 0));
@@ -90,20 +117,15 @@ export function usePlaygroundViewModel() {
   function onRenderClicked() {
     download();
   }
-  function toImage() {
-    const c = canvasRef.current as HTMLCanvasElement;
-    const canvasData = c.toDataURL("image/png");
-    return canvasData.split(",")[1];
-  }
+
   function download() {
     serviceWorker.call(frames);
   }
 
-  function onCanvasChange() {
-    const data = toImage();
-    setCurrentFrame(data);
-    frames[curser] = data;
-    hintFrames[curser] = data;
+  function onCanvasChange(newChanges: string) {
+    setCurrentFrame(newChanges);
+    frames[curser] = newChanges;
+    hintFrames[curser] = newChanges;
     setFrames([...frames]);
     setHintFrames([...hintFrames]);
   }
@@ -114,16 +136,12 @@ export function usePlaygroundViewModel() {
     setFrames((prev) => {
       const newFrames = frames.filter((_, i) => i != index);
       const newHintFrames = frames.filter((_, i) => i != index);
-      if (index > curser) {
-        setCurser(curser);
-        setCurrentHintFrame(newFrames[curser - 1]);
-      } else {
-        setCurser(curser - 1);
-        setCurrentFrame(newFrames[curser - 1]);
-        setCurrentHintFrame(newFrames[curser - 2]);
-      }
       setHintFrames([...newHintFrames]);
       return [...newFrames];
+    });
+    setIsDeletedFrame({
+      yes: true,
+      index,
     });
   }
 
@@ -134,14 +152,20 @@ export function usePlaygroundViewModel() {
     const newIndex = left.push(targetFrame);
     const newFrames = [...left, ...right];
     setFrames(() => {
-      setCurser(newIndex);
-      setCurrentFrame(left[left.length - 1]);
-      setCurrentHintFrame(left[left.length - 1]);
       setHintFrames(newFrames);
+      setIsAddedNewFrame({ yes: true, index: newIndex });
       return newFrames;
     });
   }
-
+  function goTo(index: number) {
+    setCurser(index);
+    setCurrentFrame(frames[index]);
+    if (hintFrames[index - 1]) {
+      setCurrentHintFrame(hintFrames[index - 1]);
+    } else {
+      setCurrentHintFrame("");
+    }
+  }
   const isAddDisabled = frames[frames.length - 1] == "";
   const isPlayButtonDisabled =
     isPlaying ||
@@ -166,7 +190,6 @@ export function usePlaygroundViewModel() {
     onToolChange,
     onDeleteFrame,
     onCopyFrame,
-    canvasRef,
     curser,
     currentFrame,
     currentHintFrame,
