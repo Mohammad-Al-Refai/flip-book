@@ -7,6 +7,7 @@ const StyledGroupContainer = styled.div`
   width: fit-content;
   overflow: hidden;
   border-radius: 8px;
+  border: 1px solid ${(props) => props.theme.colors.surface4};
 `;
 const StyledGroupItem = styled.button<{ $isSelected: boolean }>`
   display: flex;

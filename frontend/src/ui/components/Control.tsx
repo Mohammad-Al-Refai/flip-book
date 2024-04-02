@@ -13,7 +13,7 @@ export default function Control({
 }: ControlProps) {
   return (
     <Container
-      background="surface3"
+      background="secondary"
       className="w-100 p-l flex align-items-center justify-content-center"
     >
       <ButtonGroup

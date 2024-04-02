@@ -21,7 +21,7 @@ export default function PlaygroundPage() {
         />
         <Container
           className="flex justify-content-center align-items-center w-100 h-100"
-          background="surface4"
+          background="background"
         >
           <Canvas
             isPlaying={vm.isPlaying}

@@ -6,7 +6,7 @@ type variant = keyof ColorKeys;
 
 const StyledElement = styled.button<{ $variant: variant }>`
   cursor: pointer;
-  border: 0px solid;
+  border: 1px solid ${(props) => props.theme.colors.surface4};
   border-radius: ${(props) => props.theme.surrounding.M};
   padding: ${(props) => props.theme.surrounding.M};
   background-color: ${(props) =>
