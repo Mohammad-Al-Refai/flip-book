@@ -16,6 +16,14 @@ export function usePlaygroundViewModel() {
   const [shouldClearCanvas, setShouldClearCanvas] = useState(false);
   const MIN_FRAMES_TO_PROCESS = 3;
   const serviceWorker = useGetGif();
+  const [isAddedNewFrame, setIsAddedNewFrame] = useState({
+    yes: false,
+    index: 0,
+  });
+  const [isDeletedFrame, setIsDeletedFrame] = useState({
+    yes: false,
+    index: 0,
+  });
   const [currentTool, setCurrentTool] = useState(DrawingTool.Pencil);
   const FPS = 100;
   useEffect(() => {
@@ -42,6 +50,34 @@ export function usePlaygroundViewModel() {
     }
     goTo(curser);
   }, [curser, isPlaying]);
+  useEffect(() => {
+    if (isAddedNewFrame.yes) {
+      goTo(isAddedNewFrame.index);
+      setIsAddedNewFrame({ yes: false, index: 0 });
+    }
+  }, [isAddedNewFrame]);
+  useEffect(() => {
+    if (!isDeletedFrame.yes) {
+      return;
+    }
+    const index = isDeletedFrame.index;
+    if (index == 0 && curser == 0) {
+      goTo(0);
+    }
+    if (index == curser && curser == frames.length) {
+      goTo(frames.length - 1);
+    }
+    if (index > 0 && index < frames.length) {
+      goTo(index);
+    }
+    if (index != curser && curser == frames.length) {
+      goTo(curser - 1);
+    }
+    setIsDeletedFrame({
+      yes: false,
+      index: 0,
+    });
+  }, [isDeletedFrame, curser, frames]);
 
   function onAddNewFrame() {
     setFrames([...frames, ""]);
@@ -100,13 +136,12 @@ export function usePlaygroundViewModel() {
     setFrames((prev) => {
       const newFrames = frames.filter((_, i) => i != index);
       const newHintFrames = frames.filter((_, i) => i != index);
-      if (index > curser) {
-        goTo(curser);
-      } else {
-        goTo(curser - 1);
-      }
       setHintFrames([...newHintFrames]);
       return [...newFrames];
+    });
+    setIsDeletedFrame({
+      yes: true,
+      index,
     });
   }
 
@@ -118,16 +153,11 @@ export function usePlaygroundViewModel() {
     const newFrames = [...left, ...right];
     setFrames(() => {
       setHintFrames(newFrames);
+      setIsAddedNewFrame({ yes: true, index: newIndex });
       return newFrames;
     });
-    goTo(newIndex);
   }
-  async function goTo(index: number) {
-    console.log({
-      current: index,
-      frames: frames.map((v) => v.substring(0, 3)),
-      hints: hintFrames.map((v) => v.substring(0, 3)),
-    });
+  function goTo(index: number) {
     setCurser(index);
     setCurrentFrame(frames[index]);
     if (hintFrames[index - 1]) {
