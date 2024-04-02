@@ -3,26 +3,17 @@ import Button from "./Button";
 import { If } from "./If";
 import { Text } from "./Text";
 import { Icons } from "../../utils/Icons";
+import { useEffect, useRef } from "react";
 
 const StyledTimeline = styled.div`
-  padding: ${(props) => props.theme.horizontalSpacing.L};
   display: flex;
   width: 100%;
   min-width: 100px;
   overflow-inline: hidden;
   flex-direction: column;
-  background-color: ${(props) => props.theme.colors.surface3};
+  background-color: ${(props) => props.theme.colors.onBackground};
 `;
-const StyledActionsContainer = styled.div`
-  display: flex;
-  position: absolute;
-  transform: translate(0%, 0%);
-  opacity: 0;
-  z-index: 999;
-  transition: 0.1s;
-`;
-const StyledActionsContainerClassName =
-  StyledActionsContainer.styledComponentId;
+
 const StyledTimelineItem = styled.div<{ $highlight: boolean }>`
   transition: 0.1s;
   display: inline;
@@ -41,15 +32,8 @@ const StyledTimelineItem = styled.div<{ $highlight: boolean }>`
   align-items: center;
   justify-content: center;
   border-radius: 4px;
-  margin: ${(props) => props.theme.surrounding.S};
   cursor: pointer;
-  &:hover {
-    box-shadow: 0px 0px 15px 3px #2f2f2f;
-    .${StyledActionsContainerClassName} {
-      transform: translate(0%, -150%);
-      opacity: 1;
-    }
-  }
+  margin: ${(props) => props.theme.surrounding.S};
 `;
 const StyledAdd = styled(Button)`
   background-color: ${(props) => props.theme.colors.primary};
@@ -66,12 +50,19 @@ const StyledScrollableContainer = styled.div`
   display: flex;
   align-items: center;
   overflow-x: auto;
+  margin-block: ${(props) => props.theme.surrounding.XL2};
+  margin-inline: ${(props) => props.theme.surrounding.XL};
 `;
 const StyledPreviewImage = styled.img`
   width: 100%;
   height: 100%;
 `;
-
+const StyledTimelineItemsActionsContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: ${(props) => props.theme.surrounding.M};
+`;
 export default function Timeline({
   frames,
   onAdd,
@@ -91,64 +82,61 @@ export default function Timeline({
 
   return (
     <StyledTimeline>
-      <div className="flex align-items-center justify-content-center">
-        <If condition={!isPlaying}>
+      <StyledTimelineItemsActionsContainer>
+        <div className="w-50">
           <Button
             className="ml-l p-m"
-            variant="primary"
-            disabled={disablePlayButton}
-            onClick={onPlayClicked}
+            variant="tertiary"
+            onClick={() => onCopyFrame(current)}
           >
             <Text
-              fontSize="L"
-              className={Icons.PLAY}
-              variant="onPrimary"
+              fontSize="S"
+              className={Icons.COPY}
+              variant="onTertiary"
             ></Text>
           </Button>
-        </If>
-        <If condition={isPlaying}>
           <Button
-            className="ml-l  p-m"
-            variant="primary"
-            onClick={onPauseClicked}
+            className="ml-l p-m"
+            variant="danger"
+            disabled={frames.length == 1}
+            onClick={() => onDeleteFrame(current)}
           >
             <Text
-              fontSize="L"
-              className={Icons.PAUSE}
-              variant="onPrimary"
+              fontSize="S"
+              className={Icons.DELETE}
+              variant="onDanger"
             ></Text>
           </Button>
-        </If>
-      </div>
+        </div>
+        <div className="flex align-items-center justify-content-start w-50">
+          <If condition={!isPlaying}>
+            <Button
+              className="p-m"
+              variant="primary"
+              disabled={disablePlayButton}
+              onClick={onPlayClicked}
+            >
+              <Text
+                fontSize="L"
+                className={Icons.PLAY}
+                variant="onPrimary"
+              ></Text>
+            </Button>
+          </If>
+          <If condition={isPlaying}>
+            <Button className="p-m" variant="primary" onClick={onPauseClicked}>
+              <Text
+                fontSize="L"
+                className={Icons.PAUSE}
+                variant="onPrimary"
+              ></Text>
+            </Button>
+          </If>
+        </div>
+      </StyledTimelineItemsActionsContainer>
       <StyledScrollableContainer>
         {frames.map((page, i) => (
           <StyledTimelineItem key={i} $highlight={current == i}>
-            <If condition={!isPlaying}>
-              <StyledActionsContainer>
-                <If condition={page != ""}>
-                  <Button
-                    className="mr-m"
-                    variant="tertiary"
-                    onClick={() => onCopyFrame(i)}
-                  >
-                    <Text
-                      fontSize="S"
-                      className={Icons.COPY}
-                      variant="onTertiary"
-                    ></Text>
-                  </Button>
-                </If>
-                <If condition={frames.length != 1}>
-                  <Button variant="danger" onClick={() => onDeleteFrame(i)}>
-                    <Text
-                      fontSize="S"
-                      className={Icons.DELETE}
-                      variant="onDanger"
-                    ></Text>
-                  </Button>
-                </If>
-              </StyledActionsContainer>
-            </If>
             <If condition={page != ""}>
               <StyledPreviewImage
                 onClick={() => {
