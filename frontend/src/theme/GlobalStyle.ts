@@ -126,6 +126,25 @@ function initGlobalCss() {
 }
 
 const GlobalStyle = createGlobalStyle`
+* {
+  box-sizing: border-box;
+  margin: 0px;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+canvas {
+  position: absolute;
+  cursor:none;
+}
+
+.hint-canvas{
+ visibility: visible;
+  opacity: 0.1;
+}
+
+.hide-hint-canvas{
+ visibility: hidden;
+}
 /* width */
 ::-webkit-scrollbar {
   width: 8px;

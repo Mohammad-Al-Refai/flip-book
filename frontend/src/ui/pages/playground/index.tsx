@@ -14,11 +14,8 @@ export default function PlaygroundPage() {
     <AppContainer>
       <Container className="flex column w-100">
         <Control
-          onColorChange={vm.onChangeColor}
           disableRenderButton={vm.isRenderButtonDisabled}
           onRenderClicked={vm.onRenderClicked}
-          currentTool={vm.currentTool}
-          onToolChange={vm.onToolChange}
         />
         <Container
           className="flex justify-content-center align-items-center w-100 h-100"
@@ -30,8 +27,6 @@ export default function PlaygroundPage() {
             onClear={vm.onClearCanvas}
             currentHintFrame={vm.currentHintFrame}
             currentFrame={vm.currentFrame}
-            currentTool={vm.currentTool}
-            currentColor={vm.selectedColor}
             onChange={vm.onCanvasChange}
           />
         </Container>

@@ -3,7 +3,6 @@ import Button from "./Button";
 import { If } from "./If";
 import { Text } from "./Text";
 import { Icons } from "../../utils/Icons";
-import { useEffect, useRef } from "react";
 
 const StyledTimeline = styled.div`
   display: flex;

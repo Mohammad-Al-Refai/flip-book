@@ -1,3 +1,5 @@
+import { useAppDispatch } from "../../hooks/useAppDispatch";
+import { EditorSliceActions, useEditor } from "../../store/slices/EditorSlice";
 import { Icons } from "../../utils/Icons";
 import { DrawingTool } from "../../utils/Tools";
 import Button from "./Button";
@@ -9,21 +11,25 @@ import { Text } from "./Text";
 export default function Control({
   disableRenderButton,
   onRenderClicked,
-  currentTool,
-  onToolChange,
-  onColorChange,
 }: ControlProps) {
+  const dispatch = useAppDispatch();
+  const { selectedTool } = useEditor();
+  function onToolChange(tool: DrawingTool) {
+    dispatch(EditorSliceActions.setSelectedTool(tool));
+  }
   return (
     <Container
       background="secondary"
-      className="w-100 p-l flex align-items-center justify-content-center"
+      className="w-100 p-xl flex align-items-center justify-content-between"
     >
-      <ColorPicker onChange={onColorChange} />
-      <ButtonGroup
-        current={currentTool}
-        items={[DrawingTool.Pencil, DrawingTool.Eraser]}
-        onChange={onToolChange}
-      />
+      <div className="flex">
+        <ColorPicker />
+        <ButtonGroup
+          current={selectedTool}
+          items={[DrawingTool.Pencil, DrawingTool.Eraser]}
+          onChange={onToolChange}
+        />
+      </div>
       <Button
         className="ml-l"
         variant="tertiary"
@@ -42,7 +48,4 @@ export default function Control({
 interface ControlProps {
   disableRenderButton: boolean;
   onRenderClicked: () => void;
-  currentTool: DrawingTool;
-  onToolChange: (tool: DrawingTool) => void;
-  onColorChange: (color: string) => void;
 }

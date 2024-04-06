@@ -15,7 +15,6 @@ export function usePlaygroundViewModel() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isRendering, setIsRendering] = useState(false);
   const [shouldClearCanvas, setShouldClearCanvas] = useState(false);
-  const [selectedColor, setSelectedColor] = useState(ColorPickerColors.red[0]);
   const MIN_FRAMES_TO_PROCESS = 3;
   const serviceWorker = useGetGif();
   const [isAddedNewFrame, setIsAddedNewFrame] = useState({
@@ -168,9 +167,6 @@ export function usePlaygroundViewModel() {
       setCurrentHintFrame("");
     }
   }
-  function onChangeColor(color: string) {
-    setSelectedColor(color);
-  }
   const isAddDisabled = frames[frames.length - 1] == "";
   const isPlayButtonDisabled =
     isPlaying ||
@@ -207,7 +203,5 @@ export function usePlaygroundViewModel() {
     isPlaying,
     isAddDisabled,
     currentTool,
-    onChangeColor,
-    selectedColor,
   };
 }

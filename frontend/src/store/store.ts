@@ -1,11 +1,11 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { UISlice } from "./slices/UISlice";
-import { DrawSlice } from "./slices/DrawSlice";
+import { EditorSlice } from "./slices/EditorSlice";
 
 export const store = configureStore({
   reducer: {
     [UISlice.name]: UISlice.reducer,
-    [DrawSlice.name]: DrawSlice.reducer,
+    [EditorSlice.name]: EditorSlice.reducer,
   },
 });
 
