@@ -1,5 +1,7 @@
 import { lazy } from "react";
 import { usePlaygroundViewModel } from "./usePlaygroundViewModel";
+import { Dialog } from "../../components/Dialog";
+import { Text } from "../../components/Text";
 
 const AppContainer = lazy(() => import("../../components/AppContainer"));
 const Canvas = lazy(() => import("../../components/Canvas"));
@@ -12,6 +14,13 @@ export default function PlaygroundPage() {
 
   return (
     <AppContainer>
+      <Dialog isOpen={vm.isRendering}>
+        <div className="h-100 flex align-items-center justify-content-center">
+          <Text variant={"background"} fontSize={"L"}>
+            Rendering
+          </Text>
+        </div>
+      </Dialog>
       <Container className="flex column w-100">
         <Control
           disableRenderButton={vm.isRenderButtonDisabled}
