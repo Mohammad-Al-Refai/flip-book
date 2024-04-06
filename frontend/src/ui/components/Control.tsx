@@ -2,6 +2,7 @@ import { Icons } from "../../utils/Icons";
 import { DrawingTool } from "../../utils/Tools";
 import Button from "./Button";
 import { ButtonGroup } from "./ButtonGroup";
+import { ColorPicker } from "./ColorPicker";
 import Container from "./Container";
 import { Text } from "./Text";
 
@@ -10,12 +11,14 @@ export default function Control({
   onRenderClicked,
   currentTool,
   onToolChange,
+  onColorChange,
 }: ControlProps) {
   return (
     <Container
       background="secondary"
       className="w-100 p-l flex align-items-center justify-content-center"
     >
+      <ColorPicker onChange={onColorChange} />
       <ButtonGroup
         current={currentTool}
         items={[DrawingTool.Pencil, DrawingTool.Eraser]}
@@ -41,4 +44,5 @@ interface ControlProps {
   onRenderClicked: () => void;
   currentTool: DrawingTool;
   onToolChange: (tool: DrawingTool) => void;
+  onColorChange: (color: string) => void;
 }

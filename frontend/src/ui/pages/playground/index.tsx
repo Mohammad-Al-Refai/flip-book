@@ -14,6 +14,7 @@ export default function PlaygroundPage() {
     <AppContainer>
       <Container className="flex column w-100">
         <Control
+          onColorChange={vm.onChangeColor}
           disableRenderButton={vm.isRenderButtonDisabled}
           onRenderClicked={vm.onRenderClicked}
           currentTool={vm.currentTool}
@@ -30,6 +31,7 @@ export default function PlaygroundPage() {
             currentHintFrame={vm.currentHintFrame}
             currentFrame={vm.currentFrame}
             currentTool={vm.currentTool}
+            currentColor={vm.selectedColor}
             onChange={vm.onCanvasChange}
           />
         </Container>

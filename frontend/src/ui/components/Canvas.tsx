@@ -12,6 +12,7 @@ export default function Canvas({
   isPlaying,
   shouldClearEditorLayer,
   currentTool,
+  currentColor,
 }: CanvasProps) {
   const [editorLayerContext, updateEditorLayerContext] = useState<
     CanvasRenderingContext2D | undefined
@@ -23,7 +24,6 @@ export default function Canvas({
   const hintPageCanvasRef = useRef<HTMLCanvasElement>(null);
   const editorCanvasRef = useRef<HTMLCanvasElement>(null);
   const [isMouseDown, setIsMouseDown] = useState(false);
-  const color = "red";
   const lineWidth = 2;
   const [isMouseInCanvas, setMouseInCanvas] = useState(false);
   useEffect(() => {
@@ -143,7 +143,7 @@ export default function Canvas({
       editorLayerContext!.lineWidth = 30;
     }
     if (currentTool == DrawingTool.Pencil) {
-      editorLayerContext!.strokeStyle = color;
+      editorLayerContext!.strokeStyle = currentColor;
       editorLayerContext!.lineWidth = 5;
     }
 
@@ -174,7 +174,7 @@ export default function Canvas({
       <If condition={isMouseInCanvas && !isPlaying}>
         <Curser
           tool={currentTool}
-          color={"red"}
+          color={currentColor}
           x={curserPosition.x}
           y={curserPosition.y}
         />
@@ -189,10 +189,6 @@ interface CanvasProps {
   shouldClearEditorLayer: boolean;
   currentFrame: string;
   currentHintFrame: string;
+  currentColor: string;
   currentTool: DrawingTool;
-}
-export interface RectProp {
-  x: number;
-  y: number;
-  color: string;
 }
