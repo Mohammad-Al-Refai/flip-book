@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useGetGif } from "../../../hooks/useGetGif";
 import { base64ToBinary, createBlob } from "../../../utils/Base64Utils";
 import { DrawingTool } from "../../../utils/Tools";
+import { ColorPickerColors } from "../../../utils/Colors";
 
 export function usePlaygroundViewModel() {
   const [currentFrame, setCurrentFrame] = useState("");

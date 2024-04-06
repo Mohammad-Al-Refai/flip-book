@@ -3,6 +3,7 @@ import { toPNGBase64 } from "../../utils/Base64Utils";
 import { Curser } from "./Curser";
 import { If } from "./If";
 import { DrawingTool } from "../../utils/Tools";
+import { useEditor } from "../../store/slices/EditorSlice";
 
 export default function Canvas({
   currentFrame,
@@ -11,7 +12,6 @@ export default function Canvas({
   onClear,
   isPlaying,
   shouldClearEditorLayer,
-  currentTool,
 }: CanvasProps) {
   const [editorLayerContext, updateEditorLayerContext] = useState<
     CanvasRenderingContext2D | undefined
@@ -23,9 +23,9 @@ export default function Canvas({
   const hintPageCanvasRef = useRef<HTMLCanvasElement>(null);
   const editorCanvasRef = useRef<HTMLCanvasElement>(null);
   const [isMouseDown, setIsMouseDown] = useState(false);
-  const color = "red";
   const lineWidth = 2;
   const [isMouseInCanvas, setMouseInCanvas] = useState(false);
+  const { selectedColor, selectedTool } = useEditor();
   useEffect(() => {
     const context = editorCanvasRef.current!.getContext("2d", {
       willReadFrequently: true,
@@ -138,12 +138,12 @@ export default function Canvas({
     const y = e.nativeEvent.offsetY;
 
     editorLayerContext!.lineTo(x, y);
-    if (currentTool === DrawingTool.Eraser) {
+    if (selectedTool === DrawingTool.Eraser) {
       editorLayerContext!.strokeStyle = "#fff";
       editorLayerContext!.lineWidth = 30;
     }
-    if (currentTool == DrawingTool.Pencil) {
-      editorLayerContext!.strokeStyle = color;
+    if (selectedTool == DrawingTool.Pencil) {
+      editorLayerContext!.strokeStyle = selectedColor;
       editorLayerContext!.lineWidth = 5;
     }
 
@@ -173,8 +173,8 @@ export default function Canvas({
       />
       <If condition={isMouseInCanvas && !isPlaying}>
         <Curser
-          tool={currentTool}
-          color={"red"}
+          tool={selectedTool}
+          color={selectedColor}
           x={curserPosition.x}
           y={curserPosition.y}
         />
@@ -189,10 +189,4 @@ interface CanvasProps {
   shouldClearEditorLayer: boolean;
   currentFrame: string;
   currentHintFrame: string;
-  currentTool: DrawingTool;
-}
-export interface RectProp {
-  x: number;
-  y: number;
-  color: string;
 }

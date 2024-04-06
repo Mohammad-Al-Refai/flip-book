@@ -16,8 +16,6 @@ export default function PlaygroundPage() {
         <Control
           disableRenderButton={vm.isRenderButtonDisabled}
           onRenderClicked={vm.onRenderClicked}
-          currentTool={vm.currentTool}
-          onToolChange={vm.onToolChange}
         />
         <Container
           className="flex justify-content-center align-items-center w-100 h-100"
@@ -29,7 +27,6 @@ export default function PlaygroundPage() {
             onClear={vm.onClearCanvas}
             currentHintFrame={vm.currentHintFrame}
             currentFrame={vm.currentFrame}
-            currentTool={vm.currentTool}
             onChange={vm.onCanvasChange}
           />
         </Container>

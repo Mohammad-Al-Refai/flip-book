@@ -3,7 +3,6 @@ import Button from "./Button";
 import { If } from "./If";
 import { Text } from "./Text";
 import { Icons } from "../../utils/Icons";
-import { useEffect, useRef } from "react";
 
 const StyledTimeline = styled.div`
   display: flex;
@@ -18,15 +17,12 @@ const StyledTimelineItem = styled.div<{ $highlight: boolean }>`
   transition: 0.1s;
   display: inline;
   border: ${(props) =>
-    props.$highlight ? `2px solid ${props.theme.colors.primary}` : "unset"};
+    props.$highlight ? `3px solid ${props.theme.colors.primary}` : "unset"};
   max-height: 70px;
   max-width: 70px;
   min-height: 70px;
   min-width: 70px;
-  background-color: ${(props) =>
-    props.$highlight
-      ? props.theme.colors.secondary
-      : props.theme.colors.surface4};
+  background-color: ${(props) => props.theme.colors.onSurface};
   color: ${(props) => props.theme.colors.onSurface};
   display: flex;
   align-items: center;
