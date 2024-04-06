@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { useGetGif } from "../../../hooks/useGetGif";
 import { base64ToBinary, createBlob } from "../../../utils/Base64Utils";
 import { DrawingTool } from "../../../utils/Tools";
-import { ColorPickerColors } from "../../../utils/Colors";
 
 export function usePlaygroundViewModel() {
   const [currentFrame, setCurrentFrame] = useState("");
@@ -10,7 +9,6 @@ export function usePlaygroundViewModel() {
   const [hintFrames, setHintFrames] = useState([""]);
   const [currentHintFrame, setCurrentHintFrame] = useState("");
   const [curser, setCurser] = useState(0);
-  const [selectedFrame, setSelectedFrame] = useState(frames[0]);
   const [playTimer, setPlayTimer] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isRendering, setIsRendering] = useState(false);
@@ -29,6 +27,7 @@ export function usePlaygroundViewModel() {
   const FPS = 100;
   useEffect(() => {
     if (serviceWorker.gifBase64 != "") {
+      setIsRendering(false);
       const base64String = serviceWorker.gifBase64;
       const binaryData = base64ToBinary(base64String);
       const blob = createBlob(binaryData);
@@ -121,6 +120,7 @@ export function usePlaygroundViewModel() {
 
   function download() {
     serviceWorker.call(frames);
+    setIsRendering(true);
   }
 
   function onCanvasChange(newChanges: string) {
@@ -194,7 +194,6 @@ export function usePlaygroundViewModel() {
     curser,
     currentFrame,
     currentHintFrame,
-    selectedFrame,
     frames,
     isPlayButtonDisabled,
     isRenderButtonDisabled,
@@ -202,6 +201,7 @@ export function usePlaygroundViewModel() {
     shouldClearCanvas,
     isPlaying,
     isAddDisabled,
+    isRendering,
     currentTool,
   };
 }
