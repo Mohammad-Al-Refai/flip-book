@@ -28,8 +28,11 @@ export function useGetGif() {
     setIsError(false);
   });
   function call(frames: string[]) {
-    worker.postMessage({ command: "generate", frames });
+    setGifBase64("");
+    setIsError(false);
+    setWasmError("");
     setIsLoading(true);
+    worker.postMessage({ command: "generate", frames });
   }
   return { call, gifBase64, isLoading, wasmError, isError };
 }
