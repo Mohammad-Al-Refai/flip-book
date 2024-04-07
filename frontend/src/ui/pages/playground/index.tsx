@@ -15,10 +15,10 @@ export default function PlaygroundPage() {
 
   return (
     <AppContainer>
-      <Dialog isOpen={true}>
+      <Dialog isOpen={vm.isRendering}>
         <div className="h-100 flex column align-items-center justify-content-center">
           <LoadingComponent />
-          <Text className="mt-xl5" variant={"background"} fontSize={"L"}>
+          <Text className="mt-xl5" variant={"onSecondary"} fontSize={"L"}>
             Converting your art to gif..
           </Text>
         </div>

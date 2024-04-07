@@ -4,20 +4,28 @@ import styled from "styled-components";
 const StyledDialog = styled.dialog`
   padding: ${(props) => props.theme.surrounding.XL};
   width: 30%;
+  max-width: 400px;
+  max-height: 300px;
   height: 30%;
   border: 0;
   border-radius: 8px;
-  background-color: #0000001f;
-  transform: translate(35vw, 100%);
+  background-color: ${(props) => props.theme.colors.secondary};
+  transform: translate(40vw, 100%);
   outline: unset;
   &::backdrop {
-    display: flex;
-    align-items: center;
-    justify-content: center;
     opacity: 1;
     background-color: transparent;
     backdrop-filter: blur(5px);
   }
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  animation: fadeIn 0.2s ease-in-out forwards;
 `;
 
 export function Dialog({ isOpen, children }: DialogProps) {
