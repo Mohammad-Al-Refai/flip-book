@@ -20,7 +20,7 @@ const StyledCircle1 = styled.div<{ $delay: number }>`
   }
   width: 20px;
   height: 20px;
-  background-color: #000;
+  background-color: ${(props) => props.theme.colors.onSecondary};
   border-radius: 50%;
   margin: 0 10px;
   animation: upDown 1s ease-in-out infinite;
