@@ -2,6 +2,7 @@ import { lazy } from "react";
 import { usePlaygroundViewModel } from "./usePlaygroundViewModel";
 import { Dialog } from "../../components/Dialog";
 import { Text } from "../../components/Text";
+import { LoadingComponent } from "../../components/Loading";
 
 const AppContainer = lazy(() => import("../../components/AppContainer"));
 const Canvas = lazy(() => import("../../components/Canvas"));
@@ -14,10 +15,11 @@ export default function PlaygroundPage() {
 
   return (
     <AppContainer>
-      <Dialog isOpen={vm.isRendering}>
-        <div className="h-100 flex align-items-center justify-content-center">
-          <Text variant={"background"} fontSize={"L"}>
-            Rendering
+      <Dialog isOpen={true}>
+        <div className="h-100 flex column align-items-center justify-content-center">
+          <LoadingComponent />
+          <Text className="mt-xl5" variant={"background"} fontSize={"L"}>
+            Converting your art to gif..
           </Text>
         </div>
       </Dialog>
