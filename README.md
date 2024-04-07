@@ -8,21 +8,55 @@ Drawing frame by frame to make animations and convert them to gif file
 - React js
 - Typescript
 - Webassembly
-- Golang
+- Golang version 1.21.4
+- Node js version 21.7.2
+
 
 ## Screenshot
 
 ![image](https://github.com/Mohammad-Al-Refai/flip-book/assets/55941955/76d8e92d-58a3-409d-b5e3-67c717e0dfef)
 
 
-
-## Compile to wasm
+## Compile Go to wasm
+### Go to backend folder
 ```
-GOOS=js GOARCH=wasm go build -o main.wasm main.go & cp "main.wasm" ../frontend/public
+cd backend
 ```
 
-### copy wasm_exec.js 
+### Run this command for building the wasm
+```
+GOOS=js GOARCH=wasm go build -o main.wasm main.go
+```
+
+### Move main.wasm to public folder
 
 ```
-cp "$(go env GOROOT)/misc/wasm/wasm_exec.js" .
+mv "main.wasm" ../frontend/public
+```
+
+## Build fontend
+### Go to frontend folder
+```
+cd frontend
+```
+### Install dependencies
+```
+yarn install
+```
+### Run
+
+```
+yarn dev
+```
+
+### Build
+
+```
+yarn build
+```
+
+### Preview the build
+
+```
+yarn preview
 ```
