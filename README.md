@@ -34,7 +34,7 @@ GOOS=js GOARCH=wasm go build -o main.wasm main.go
 mv "main.wasm" ../frontend/public
 ```
 
-## Build fontend
+## Build frontend 
 ### Go to frontend folder
 ```
 cd frontend
