@@ -19,10 +19,6 @@ export function usePlaygroundViewModel() {
     yes: false,
     index: 0,
   });
-  const [isDeletedFrame, setIsDeletedFrame] = useState({
-    yes: false,
-    index: 0,
-  });
   const [currentTool, setCurrentTool] = useState(DrawingTool.Pencil);
   const FPS = 100;
   useEffect(() => {
@@ -56,28 +52,6 @@ export function usePlaygroundViewModel() {
       setIsAddedNewFrame({ yes: false, index: 0 });
     }
   }, [isAddedNewFrame]);
-  useEffect(() => {
-    if (!isDeletedFrame.yes) {
-      return;
-    }
-    const index = isDeletedFrame.index;
-    if (index == 0 && curser == 0) {
-      goTo(0);
-    }
-    if (index == curser && curser == frames.length) {
-      goTo(frames.length - 1);
-    }
-    if (index > 0 && index < frames.length) {
-      goTo(index);
-    }
-    if (index != curser && curser == frames.length) {
-      goTo(curser - 1);
-    }
-    setIsDeletedFrame({
-      yes: false,
-      index: 0,
-    });
-  }, [isDeletedFrame, curser, frames]);
 
   function onAddNewFrame() {
     setFrames([...frames, ""]);
@@ -104,9 +78,7 @@ export function usePlaygroundViewModel() {
     setIsPlaying(true);
     setPlayTimer(
       setInterval(() => {
-        setCurser((prev) => {
-          return prev + 1;
-        });
+        setCurser((prev) => prev + 1);
       }, FPS)
     );
   }
@@ -134,16 +106,27 @@ export function usePlaygroundViewModel() {
     setCurrentTool(tool);
   }
   function onDeleteFrame(index: number) {
-    setFrames((prev) => {
-      const newFrames = frames.filter((_, i) => i != index);
-      const newHintFrames = frames.filter((_, i) => i != index);
-      setHintFrames([...newHintFrames]);
-      return [...newFrames];
-    });
-    setIsDeletedFrame({
-      yes: true,
-      index,
-    });
+    const newFrames = frames.filter((_, i) => i != index);
+    const newHintFrames = frames.filter((_, i) => i != index);
+    setHintFrames([...newHintFrames]);
+    setFrames([...newFrames]);
+    if (index == 0 && curser == 0) {
+      goTo(0);
+      return;
+    }
+    if (index == curser && curser == frames.length) {
+      goTo(frames.length - 1);
+      return;
+    }
+    // go to first when have only 1 frame
+    if (index > 0 && index < frames.length) {
+      goTo(index - 1);
+      return;
+    }
+    if (index != curser && curser == frames.length) {
+      goTo(curser - 1);
+      return;
+    }
   }
 
   function onCopyFrame(index: number) {
@@ -152,11 +135,9 @@ export function usePlaygroundViewModel() {
     const right = frames.slice(index, frames.length);
     const newIndex = left.push(targetFrame);
     const newFrames = [...left, ...right];
-    setFrames(() => {
-      setHintFrames(newFrames);
-      setIsAddedNewFrame({ yes: true, index: newIndex });
-      return newFrames;
-    });
+    setHintFrames(newFrames);
+    setIsAddedNewFrame({ yes: true, index: newIndex });
+    setFrames(newFrames);
   }
   function goTo(index: number) {
     setCurser(index);
