@@ -113,13 +113,10 @@ export function usePlaygroundViewModel() {
     const newFrames = [...left, ...right];
     setHintFrames((_) => [...newFrames]);
     setFrames((_) => [...newFrames]);
-    console.log(`${newFrames.length} frames in onCopyFrame`, { newIndex });
     goToFrameIndex(newIndex);
   }
 
-  //Bug: always has outdated frames
   function goToFrameIndex(index: number) {
-    console.log(`${frames.length} frames in goToFrameIndex`);
     setCurser(index);
     setCurrentFrame(frames[index]);
     if (hintFrames[index - 1]) {
