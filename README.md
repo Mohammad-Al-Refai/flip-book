@@ -4,10 +4,10 @@
 
 ## Using
 
-- React js 18.2.0
-- Typescript 5.4.3
-- Golang version 1.21.4
-- Node js version 21.7.2
+- React js v18.2.0
+- Typescript v5.4.3
+- Golang v1.21.4
+- Node js v21.7.2
 - WebAssembly
 
 ## Screenshot
