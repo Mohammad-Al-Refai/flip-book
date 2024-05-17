@@ -12,7 +12,7 @@
 
 ## Screenshot
 
-![image](![image](https://github.com/Mohammad-Al-Refai/flip-book/assets/55941955/8fe0f559-b9eb-47c6-be8f-a3817598e189)
+![image](https://github.com/Mohammad-Al-Refai/flip-book/assets/55941955/8fe0f559-b9eb-47c6-be8f-a3817598e189)
 
 ## Compile Go to wasm
 
