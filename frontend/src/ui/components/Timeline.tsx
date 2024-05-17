@@ -71,6 +71,8 @@ export default function Timeline({
   isPlaying,
   disableAdd,
   disablePlayButton,
+  disableCopy,
+  disableDelete,
 }: TimelineProps) {
   function getSrc(data: string) {
     return "data:image/png;base64," + data;
@@ -83,6 +85,7 @@ export default function Timeline({
           <Button
             className="ml-l p-m"
             variant="tertiary"
+            disabled={disableCopy}
             onClick={() => onCopyFrame(current)}
           >
             <Text
@@ -94,7 +97,7 @@ export default function Timeline({
           <Button
             className="ml-l p-m"
             variant="danger"
-            disabled={frames.length == 1}
+            disabled={disableDelete}
             onClick={() => onDeleteFrame(current)}
           >
             <Text
@@ -174,5 +177,7 @@ interface TimelineProps {
   disablePlayButton: boolean;
   isPlaying: boolean;
   disableAdd: boolean;
+  disableCopy: boolean;
+  disableDelete: boolean;
   current: number;
 }

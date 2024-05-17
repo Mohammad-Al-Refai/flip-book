@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useGetGif } from "../../../hooks/useGetGif";
 import { base64ToBinary, createBlob } from "../../../utils/Base64Utils";
 import { DrawingTool } from "../../../utils/Tools";
+import { usePlayController } from "../../../hooks/usePlayController";
 
 export function usePlaygroundViewModel() {
   const [currentFrame, setCurrentFrame] = useState("");
@@ -9,18 +10,16 @@ export function usePlaygroundViewModel() {
   const [hintFrames, setHintFrames] = useState([""]);
   const [currentHintFrame, setCurrentHintFrame] = useState("");
   const [curser, setCurser] = useState(0);
-  const [playTimer, setPlayTimer] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
   const [isRendering, setIsRendering] = useState(false);
   const [shouldClearCanvas, setShouldClearCanvas] = useState(false);
   const MIN_FRAMES_TO_PROCESS = 3;
   const serviceWorker = useGetGif();
-  const [isAddedNewFrame, setIsAddedNewFrame] = useState({
-    yes: false,
-    index: 0,
-  });
   const [currentTool, setCurrentTool] = useState(DrawingTool.Pencil);
-  const FPS = 100;
+  const playController = usePlayController({
+    limit: frames.length,
+    delayPerFrame: 500,
+    onTick: onTick,
+  });
   useEffect(() => {
     if (serviceWorker.gifBase64 != "") {
       setIsRendering(false);
@@ -35,24 +34,9 @@ export function usePlaygroundViewModel() {
     }
   }, [serviceWorker.gifBase64]);
 
-  //Track curser & isPlaying to update the currentPage & hintPage
-  useEffect(() => {
-    if (!isPlaying) {
-      return;
-    }
-    if (curser == frames.length) {
-      setCurser((prev) => (prev = 0));
-      return;
-    }
-    goTo(curser);
-  }, [curser, isPlaying]);
-  useEffect(() => {
-    if (isAddedNewFrame.yes) {
-      goTo(isAddedNewFrame.index);
-      setIsAddedNewFrame({ yes: false, index: 0 });
-    }
-  }, [isAddedNewFrame]);
-
+  function onTick(count: number) {
+    goToFrameIndex(count);
+  }
   function onAddNewFrame() {
     setFrames([...frames, ""]);
     setCurrentFrame("");
@@ -71,20 +55,13 @@ export function usePlaygroundViewModel() {
     if (frames[frames.length - 1] == "") {
       return;
     }
-    goTo(index);
+    goToFrameIndex(index);
   }
   function onPlayClicked() {
-    setCurser((prev) => (prev = 0));
-    setIsPlaying(true);
-    setPlayTimer(
-      setInterval(() => {
-        setCurser((prev) => prev + 1);
-      }, FPS)
-    );
+    playController.play();
   }
   function onPauseClicked() {
-    setIsPlaying(false);
-    clearInterval(playTimer);
+    playController.pause();
   }
   function onRenderClicked() {
     download();
@@ -111,55 +88,65 @@ export function usePlaygroundViewModel() {
     setHintFrames([...newHintFrames]);
     setFrames([...newFrames]);
     if (index == 0 && curser == 0) {
-      goTo(0);
+      goToFrameIndex(0);
       return;
     }
     if (index == curser && curser == frames.length) {
-      goTo(frames.length - 1);
+      goToFrameIndex(frames.length - 1);
       return;
     }
     // go to first when have only 1 frame
     if (index > 0 && index < frames.length) {
-      goTo(index - 1);
+      goToFrameIndex(index - 1);
       return;
     }
     if (index != curser && curser == frames.length) {
-      goTo(curser - 1);
+      goToFrameIndex(curser - 1);
       return;
     }
   }
-
   function onCopyFrame(index: number) {
     const targetFrame = frames[index];
     const left = frames.slice(0, index);
     const right = frames.slice(index, frames.length);
-    const newIndex = left.push(targetFrame);
+    const newIndex = left.push(targetFrame) - 1;
     const newFrames = [...left, ...right];
-    setHintFrames(newFrames);
-    setIsAddedNewFrame({ yes: true, index: newIndex });
-    setFrames(newFrames);
+    setHintFrames((_) => [...newFrames]);
+    setFrames((_) => [...newFrames]);
+    console.log(`${newFrames.length} frames in onCopyFrame`);
+    goToFrameIndex(newIndex);
   }
-  function goTo(index: number) {
+
+  //Bug: always has outdated frames
+  function goToFrameIndex(index: number) {
+    console.log(`${frames.length} frames in goToFrameIndex`);
     setCurser(index);
     setCurrentFrame(frames[index]);
     if (hintFrames[index - 1]) {
-      setCurrentHintFrame(hintFrames[index - 1]);
+      setCurrentHintFrame(hintFrames[index - 1] || "");
     } else {
       setCurrentHintFrame("");
     }
   }
-  const isAddDisabled = frames[frames.length - 1] == "";
+  function isCurrentFrameEmpty() {
+    return frames[frames.length - 1] == "";
+  }
+  const isAddDisabled = isCurrentFrameEmpty() || playController.isPlaying;
   const isPlayButtonDisabled =
-    isPlaying ||
+    playController.isPlaying ||
     frames.length < MIN_FRAMES_TO_PROCESS ||
     isRendering ||
     isAddDisabled;
   const isRenderButtonDisabled =
-    isPlaying ||
+    playController.isPlaying ||
     frames.length < MIN_FRAMES_TO_PROCESS ||
     isRendering ||
     isAddDisabled;
-  const isStopButtonDisabled = !isPlaying || isRendering;
+  const isStopButtonDisabled = !playController.isPlaying || isRendering;
+  const isDeleteFrameDisabled =
+    playController.isPlaying || isCurrentFrameEmpty() || frames.length < 2;
+  const isCopyFrameDisabled =
+    playController.isPlaying || frames.length == 0 || isCurrentFrameEmpty();
 
   return {
     onPlayClicked,
@@ -180,7 +167,9 @@ export function usePlaygroundViewModel() {
     isRenderButtonDisabled,
     isStopButtonDisabled,
     shouldClearCanvas,
-    isPlaying,
+    isPlaying: playController.isPlaying,
+    isDeleteFrameDisabled,
+    isCopyFrameDisabled,
     isAddDisabled,
     isRendering,
     currentTool,
