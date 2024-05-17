@@ -12,7 +12,7 @@ export function usePlaygroundViewModel() {
   const [curser, setCurser] = useState(0);
   const [isRendering, setIsRendering] = useState(false);
   const [shouldClearCanvas, setShouldClearCanvas] = useState(false);
-  const MIN_FRAMES_TO_PROCESS = 3;
+  const MIN_FRAMES_TO_EXPORT = 3;
   const serviceWorker = useGetGif();
   const [currentTool, setCurrentTool] = useState(DrawingTool.Pencil);
   const playController = usePlayController({
@@ -134,12 +134,12 @@ export function usePlaygroundViewModel() {
   const isAddDisabled = isCurrentFrameEmpty() || playController.isPlaying;
   const isPlayButtonDisabled =
     playController.isPlaying ||
-    frames.length < MIN_FRAMES_TO_PROCESS ||
+    frames.length < MIN_FRAMES_TO_EXPORT ||
     isRendering ||
     isAddDisabled;
   const isRenderButtonDisabled =
     playController.isPlaying ||
-    frames.length < MIN_FRAMES_TO_PROCESS ||
+    frames.length < MIN_FRAMES_TO_EXPORT ||
     isRendering ||
     isAddDisabled;
   const isStopButtonDisabled = !playController.isPlaying || isRendering;
