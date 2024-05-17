@@ -53,6 +53,8 @@ export default function PlaygroundPage() {
           onPauseClicked={vm.onPauseClicked}
           onDeleteFrame={vm.onDeleteFrame}
           onCopyFrame={vm.onCopyFrame}
+          disableCopy={vm.isCopyFrameDisabled}
+          disableDelete={vm.isDeleteFrameDisabled}
         />
       </Container>
     </AppContainer>
