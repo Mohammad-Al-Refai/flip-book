@@ -47,7 +47,7 @@ export default function Canvas({
   }, [shouldClearEditorLayer]);
 
   useEffect(() => {
-    if (currentFrame == "") {
+    if (!currentFrame) {
       return;
     }
     const currentImage = new Image();

@@ -109,11 +109,11 @@ export function usePlaygroundViewModel() {
     const targetFrame = frames[index];
     const left = frames.slice(0, index);
     const right = frames.slice(index, frames.length);
-    const newIndex = left.push(targetFrame) - 1;
+    const newIndex = left.push(targetFrame);
     const newFrames = [...left, ...right];
     setHintFrames((_) => [...newFrames]);
     setFrames((_) => [...newFrames]);
-    console.log(`${newFrames.length} frames in onCopyFrame`);
+    console.log(`${newFrames.length} frames in onCopyFrame`, { newIndex });
     goToFrameIndex(newIndex);
   }
 
