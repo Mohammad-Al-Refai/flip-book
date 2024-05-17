@@ -4,11 +4,11 @@
 
 ## Using
 
-- React js
-- Typescript
-- WebAssembly
+- React js 18.2.0
+- Typescript 5.4.3
 - Golang version 1.21.4
 - Node js version 21.7.2
+- WebAssembly
 
 ## Screenshot
 
