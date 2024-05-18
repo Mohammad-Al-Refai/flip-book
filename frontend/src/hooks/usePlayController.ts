@@ -10,10 +10,6 @@ export function usePlayController({
   const [isPlaying, setIsPlaying] = useState(false);
   useEffect(() => {
     if (counter === limit) {
-      console.log({
-        counter,
-        limit,
-      });
       setCounter(0);
     } else if (isPlaying) {
       onTick(counter);

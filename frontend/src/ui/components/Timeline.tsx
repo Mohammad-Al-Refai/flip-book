@@ -3,6 +3,7 @@ import Button from "./Button";
 import { If } from "./If";
 import { Text } from "./Text";
 import { Icons } from "../../utils/Icons";
+import { useEffect, useRef } from "react";
 
 const StyledTimeline = styled.div`
   display: flex;
@@ -74,10 +75,15 @@ export default function Timeline({
   disableCopy,
   disableDelete,
 }: TimelineProps) {
+  const currentFrameRef = useRef<HTMLDivElement | null>(null);
   function getSrc(data: string) {
     return "data:image/png;base64," + data;
   }
-
+  useEffect(() => {
+    if (isPlaying && currentFrameRef.current) {
+      currentFrameRef.current.focus();
+    }
+  }, [current]);
   return (
     <StyledTimeline>
       <StyledTimelineItemsActionsContainer>
@@ -135,7 +141,12 @@ export default function Timeline({
       </StyledTimelineItemsActionsContainer>
       <StyledScrollableContainer>
         {frames.map((page, i) => (
-          <StyledTimelineItem key={i} $highlight={current == i}>
+          <StyledTimelineItem
+            tabIndex={0}
+            ref={current == i ? currentFrameRef : null}
+            key={i}
+            $highlight={current == i}
+          >
             <If condition={page != ""}>
               <StyledPreviewImage
                 onClick={() => {
