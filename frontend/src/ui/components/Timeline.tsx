@@ -80,7 +80,7 @@ export default function Timeline({
     return "data:image/png;base64," + data;
   }
   useEffect(() => {
-    if (isPlaying && currentFrameRef.current) {
+    if (currentFrameRef.current) {
       currentFrameRef.current.focus();
     }
   }, [current]);
